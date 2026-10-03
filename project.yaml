@@ -1,0 +1,41 @@
+# Card metadata consumed by https://designmolecule.com
+name: Kitewright Lift
+slug: kitewright-lift
+repo: BoujeeEnjinia1701/kitewright-lift         # GitHub repository, shown on every drawing and render
+area: Aerial robotics
+trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
+trl_target: 3
+design_state: constructable   # concept or constructable, see .kit/STANDARDS.md section 18
+trl_evidence:
+  - docs/01-problem.md
+  - docs/02-concept.md
+  - docs/03-requirements.md
+  - docs/decisions/0001-trl2-review-decisions.md
+  - docs/decisions/0002-design-for-construction.md
+  - docs/04-calcs/01-sizing.md
+  - docs/04-calcs/sizing.py
+  - docs/04-calcs/results.csv
+  - cad/src/model.py
+  - cad/step/kitewright-lift-assembly.step
+  - cad/step/kitewright-lift-folded.step
+  - cad/drawings/KWL-DWG-001.svg
+  - cad/drawings/KWL-DWG-001.pdf
+  - cad/drawings/KWL-DWG-002.svg
+  - bom/bom.csv
+  - docs/05-build-plan.md
+  - docs/06-design-decisions.md
+  - docs/05-build-plan/overview.png
+  - cad/src/build_plan_media.py
+  - cad/src/product_model.py
+shortlisted: false
+pitch: >-
+  A multirotor frame for the Kitewright family that hovers, lifts, winches and flies on a tether in disasters and remote terrain.
+problem: >-
+  After floods, landslides and mountain accidents, rescuers need a drone that can hover over one spot, carry a few kilograms, lower a line or a float, and stay up for hours on a tether. Drones that do this are closed and cost many times what local teams can spend.
+budget_usd: 5000
+difficulty: 4  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [open-hardware, kitewright, drone, multirotor, heavy-lift, tethered, disaster-response, high-altitude, search-and-rescue]

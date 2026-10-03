@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use or build on this design, please cite it as below."
+type: software
+title: "Kitewright Lift"
+abstract: "A multirotor frame for the Kitewright family that hovers, lifts, winches and flies on a tether in disasters and remote terrain."
+authors:
+  - given-names: Amish
+    family-names: Chadha
+    affiliation: Design Molecule
+    orcid: "https://orcid.org/0009-0000-8079-7141"
+repository-code: "https://github.com/BoujeeEnjinia1701/kitewright-lift"
+url: "https://designmolecule.com"
+license: CERN-OHL-S-2.0
+keywords:
+  - open-hardware
+  - kitewright
+  - drone
+  - multirotor
+  - heavy-lift
+  - tethered
+  - disaster-response
+  - high-altitude
+  - search-and-rescue
