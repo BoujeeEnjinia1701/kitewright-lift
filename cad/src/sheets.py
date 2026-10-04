@@ -54,10 +54,11 @@ def ga():
     work = ROOT / "cad" / "drawings" / "_ga_views"
     views = safe_project_views(assembly(P, "float"), work)
     s = Sheet(project="Kitewright Lift", title="Coaxial X8 rescue multirotor: general arrangement", dwg_no="KWL-DWG-001",
-              rev="P2", author="Amish Chadha", date=DATE_P1, scale=None,
+              rev="P3", author="Amish Chadha", date=DATE_P1, scale=None,
               material="Carbon plates and tubes, 6061-T6 fittings; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA from the TRL 3 model", DATE_P1, "AC"),
-                         ("P2", "KWL-DDR-002: design for construction", DATE_P1, "AC")])
+                         ("P2", "KWL-DDR-002: design for construction", DATE_P1, "AC"),
+                         ("P3", "KWL-DDR-003: pocketed fittings, lithium-ion packs, 290 x 430 deck", DATE_P1, "AC")])
     s.add_ortho(views)
     s.add_svg(views["iso"], 276, 32, 140, 90, label="Isometric view", sublabel="Not to scale; float release payload fitted")
     s.add_notes("Main dimensions and interfaces (mm)", [
@@ -85,9 +86,10 @@ def folded():
     bb = asm.bounding_box()
     views = safe_project_views(asm, work)
     s = Sheet(project="Kitewright Lift", title="Coaxial X8 rescue multirotor: folded for transport", dwg_no="KWL-DWG-002",
-              rev="P1", author="Amish Chadha", date=DATE_P1, scale=None,
+              rev="P2", author="Amish Chadha", date=DATE_P1, scale=None,
               material="As KWL-DWG-001. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Folded arrangement from the constructable model", DATE_P1, "AC")])
+              revisions=[("P1", "Folded arrangement from the constructable model", DATE_P1, "AC"),
+                         ("P2", "KWL-DDR-003: pocketed fittings, lithium-ion packs, larger deck", DATE_P1, "AC")])
     s.add_ortho(views)
     s.add_svg(views["iso"], 276, 32, 140, 90, label="Isometric view", sublabel="Not to scale; payload removed")
     s.add_notes("Folding (mm)", [

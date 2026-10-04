@@ -66,9 +66,9 @@ PARAMS = {
     # deck and packs
     "standoff": (8.0, 25.0),
     "post_xy": 130.0,
-    "deck": (330.0, 290.0, 3.0),
+    "deck": (290.0, 430.0, 3.0),      # sized for the long lithium-ion packs (KWL-DDR-003; was 330 x 290)
     "deck_chamfer": 35.0,
-    "pack": (126.0, 232.0, 85.0),     # ColdCell 16S2P pack: X, Y, Z (interface assumption)
+    "pack": (90.4, 378.0, 85.8),      # ColdCell lithium-ion 14S3P variant: X, Y, Z (CCL-DDR-003, CCL-DWG-002)
     "pack_gap": 30.0,
     "guide": (20.0, 2.0),
     "strap_w": 25.0,
@@ -101,10 +101,13 @@ PARAMS = {
     "saddle_x": 90.0,
     # tether module payload
     "conv": (200.0, 110.0, 65.0),
+    # deeper pockets in the machined fittings (KWL-DDR-003, decision 1 option A): side pockets that
+    # leave walls and webs of at least 4.5 mm round every hole, boss and face
+    "pockets": True, "web": 4.5,
 }
 ARM_ANGLES = (45.0, 135.0, 225.0, 315.0)
 COLLAR_BOLTS = (245.0, 267.0)
-GUIDE_X = (-110.0, 0.0, 110.0)
+GUIDE_X = (-95.0, 0.0, 95.0)
 
 
 # ---------------------------------------------------------------- helpers
@@ -260,6 +263,21 @@ def hinge_block_local(P=PARAMS):
     b = b - bx(128.0, 147.0, -8.0, 8.0, z0 - 1, z1 + 1)                              # lightening pocket
     pr, ph = P["pivot"]
     lr, lh = P["lock"]
+    if P.get("pockets"):
+        wb = P["web"]
+        # side pockets in the bolting end, between the top and bottom bolt bosses, 4.5 mm from the centre pocket
+        for s in (-1, 1):
+            b = b - bx(r0 + wb, P["slot_r0"] - 2.0, s * (8.0 + wb), s * (w + 1), z0 + 12 + wb, z1 - 12 - wb)
+        # outer-face pockets in the cheeks, 2.5 mm deep (4.5 mm of cheek left), clear of the pin bosses and the bridge
+        zp, zl = zb + ph, zb + lh
+        bp, bl_ = P["pin_d"] / 2 + wb, P["pin_d"] / 2 + wb
+        rects = [(P["slot_r0"] + 2.0, pr - bp - 0.5, z0 + wb, z1 - wb),
+                 (pr - bp + 0.5 + 0.0, lr - bl_ - 0.5, zp + bp + 1.0, z1 - wb),
+                 (pr + bp + 0.5, P["bridge_r"][0] - 3.0, z0 + wb, zl - bl_ - 0.5)]
+        for ra, rb, za, zb_ in rects:
+            if rb - ra > 4 and zb_ - za > 4:
+                for s in (-1, 1):
+                    b = b - bx(ra, rb, s * (sw + wb), s * (w + 1), za, zb_)
     b = b - ycyl(pr, zb + ph, P["pin_d"] / 2 + 0.05, -w - 1, w + 1)
     b = b - ycyl(lr, zb + lh, P["pin_d"] / 2 + 0.1, -w - 1, w + 1)
     for r, tt in block_bolt_holes(P):
@@ -282,6 +300,16 @@ def tongue_local(P=PARAMS):
     t = t - ycyl(pr, zb + ph, P["pin_d"] / 2 + 0.05, -w - 1, w + 1)
     t = t - ycyl(lr, zb + lh, P["pin_d"] / 2 + 0.1, -w - 1, w + 1)
     t = t - bx(206.0, 228.0, -w - 1, w + 1, z_arm - 12, z_arm + 12)                   # lightening window
+    if P.get("pockets"):
+        wb = P["web"]
+        web_half = 5.0                                                               # 10 mm centre web
+        bp = P["pin_d"] / 2 + wb
+        rects = [(P["tongue_r"][0] + wb, lr - bp - 0.5, zb + ph + bp + 0.5, za1 - wb),
+                 (pr + bp + 0.5, 206.0 - wb, za0 + wb, zb + lh - bp - 0.5)]
+        for ra, rb, za, zb_ in rects:
+            if rb - ra > 4 and zb_ - za > 4:
+                for s in (-1, 1):
+                    t = t - bx(ra, rb, s * web_half, s * (w + 1), za, zb_)
     for r in COLLAR_BOLTS:
         t = t - ycyl(r, z_arm, 2.65, -30, 30)
     return t
@@ -325,6 +353,12 @@ def mount_local(P=PARAMS):
             zf = z_arm + s * mh / 2
             h = h - zcyl(x, y, 1.65, min(zf, zf - s * 9), max(zf, zf - s * 9))
         h = h - ycyl(rc, z_arm, 2.65, -mt, mt)
+        if P.get("pockets"):
+            wb = P["web"]
+            dr = 17.0 - 2.15 - wb                                                     # clear of the clamp bolts
+            zi0, zi1 = (z_arm + wb, z_arm + mh / 2 - wb) if s > 0 else (z_arm - mh / 2 + wb, z_arm - wb)
+            for sy in (-1, 1):
+                h = h - bx(rc - dr, rc + dr, sy * (P["tube"][0] / 2 + 0.1 + wb), sy * (mt / 2 + 1), zi0, zi1)
         halves.append(h)
     return Compound(halves)
 

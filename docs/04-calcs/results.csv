@@ -1,28 +1,28 @@
 id,requirement,result,status
-R1,Maximum take-off mass,25.5 kg with a 5 kg payload; 20.5 kg ready to fly with no payload,Not met
-R2,Payload at sea level,Payload allowance inside R1: 4.5 kg; full-throttle thrust to weight 2.83,At risk
-R3,Payload at altitude,"Thrust to weight 1.94 at 5,000 m and -20 C with 2 kg (22.5 kg)",Met on paper
-R4,Hover time,"8.9 min with 5 kg at sea level; 7.1 min with 2 kg at 5,000 m and -20 C",Not met
-R5,Motor-out tolerance,"Thrust to weight with one motor out 2.20 at sea level, 1.51 at 5,000 m",Met on paper
-R6,Wind,18 N drag at 10 m/s; tilt 4.2 deg; position hold set by tuning,Met on paper (thrust); hold to be shown in flight
-R7,Tethered endurance,2.97 kW hover on the tether; converter margin 1.35; tether drop 23 V,Met on paper
+R1,Maximum take-off mass,26.3 kg with a 5 kg payload; 21.3 kg ready to fly with no payload,Not met
+R2,Payload at sea level,Payload allowance inside R1: 3.7 kg; full-throttle thrust to weight 2.74,At risk
+R3,Payload at altitude,"Thrust to weight 1.87 at 5,000 m and -20 C with 2 kg (23.3 kg)",Met on paper
+R4,Hover time,"18.9 min with 5 kg at sea level (26.3 kg); 15.0 min with 2 kg at 5,000 m and -20 C",Not met
+R5,Motor-out tolerance,"Thrust to weight with one motor out 2.13 at sea level, 1.46 at 5,000 m",Met on paper
+R6,Wind,18 N drag at 10 m/s; tilt 4.1 deg; position hold set by tuning,Met on paper (thrust); hold to be shown in flight
+R7,Tethered endurance,3.13 kW hover on the tether; converter margin 1.28; tether drop 25 V,Met on paper
 R8,Float and line drop,"Expected miss 2.2 m from 10 m (2 m hold, wind drift 3.3 m aimed off)",Met on paper
 R9,Transport,Folded 0.84 x 0.48 x 0.45 m; set-up about 9 min,Met on paper
-R10,Operating temperature,ColdCell heating about 53 Wh from the ground supply before take-off; parts rated -20 to +45 C,Met on paper (part ratings)
-R11,Prototype cost,"USD 5,739 for the aircraft excluding payloads",Over the value-engineering target by USD 739
-value,mtow_5,25.465,
-value,ready_kg,20.465,
-value,packs_wh,614.400,
-value,p_sl_5,3300.932,
-value,p_alt_2,3507.915,
-value,t_sl_5,8.934,
-value,t_alt_2,7.146,
-value,tw_alt,1.9449,
-value,tw_out_alt,1.513,
-value,tether_ground_kw,3.321,
-value,tether_loss,193.065,
-value,p_tether,2972.002,
-value,cost_frame,5739.000,
-value,fold_x,451.134,
-value,fold_y,480.000,
-value,fold_z,842.000,
+R10,Operating temperature,ColdCell heating about 71 Wh from the ground supply before take-off; parts rated -20 to +45 C,"At risk: the lithium-ion packs stay under 50 C in a 20 min hover only up to 25 C ambient with their jacket on (ColdCell CCL-CAL-001 K, open decision 6)"
+R11,Prototype cost,"USD 6,418 for the aircraft excluding payloads","Over the value-engineering target by USD 1,418"
+value,mtow_5,26.3067,
+value,ready_kg,21.3067,
+value,packs_wh,1360.8000,
+value,p_sl_5,3463.3479,
+value,p_alt_2,3703.9531,
+value,t_sl_5,18.8599,
+value,t_alt_2,14.9896,
+value,tw_alt,1.8747,
+value,tw_out_alt,1.4581,
+value,tether_ground_kw,3.5090,
+value,tether_loss,215.4778,
+value,p_tether,3128.8376,
+value,cost_frame,6418.0000,
+value,fold_x,451.1341,
+value,fold_y,480.0000,
+value,fold_z,842.0000,

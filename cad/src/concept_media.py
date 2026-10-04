@@ -128,7 +128,7 @@ def blueprint():
     s.add_notes("Key figures", [
         "Coaxial X8: 8 motors, 30 inch props, 1,240 mm motor to motor",
         f"Take-off mass {v['mtow_5']:.1f} kg with a 5 kg payload (limit 25 kg)",
-        f"Two ColdCell LiFePO4 packs, {v['packs_wh']:.0f} Wh in all",
+        f"Two ColdCell lithium-ion 14S3P packs, {v['packs_wh']:.0f} Wh in all",
         f"Hover {v['t_sl_5']:.0f} min at sea level with 5 kg (est.)",
         f"Hover {v['t_alt_2']:.0f} min at 5,000 m and -20 C with 2 kg (est.)",
         f"Thrust to weight {v['tw_alt']:.2f} at 5,000 m; {v['tw_out_alt']:.2f} with a motor out",

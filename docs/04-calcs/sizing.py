@@ -34,13 +34,15 @@ A = {
     "cold_factor": 0.85,          # ColdCell R1: energy delivered at -20 C, heater energy included
     "cd_a": 0.30,                 # m2, drag area of the aircraft with a payload, side on (estimate)
     "mtow_limit": 25.0,           # kg, R1
-    # LiFePO4 ColdCell pack as assumed for Lift (16S2P, 26650 power cells)
-    "pocket_saving": 1.04,        # kg: pocketing the hinge blocks and root fittings (0.10 kg each) and motor clamps (0.06 kg each)
-    "pocket_cost": 120.0,         # USD: extra machining time for the pockets (estimate)
+    # Packs. Since KWL-DDR-003 (decision 2 option A) Lift flies two ColdCell lithium-ion 14S3P packs; their
+    # mass is ColdCell's estimate (CCL-CAL-001 K: 3,844 g, of which 42 cells 2,940 g). The LiFePO4 16S2P pack of
+    # KWL-CAL-001 v0.1 and the 0.62 kg allowance Lift assumed for decision 2 are kept for comparison only.
     "cell_lfp": dict(v=3.2, ah=3.0, kg=0.085, amps=30.0, name="LiFePO4 26650, 3.0 Ah, 10C"),
     "cell_li": dict(v=3.6, ah=4.5, kg=0.070, amps=45.0, name="Li-ion 21700, 4.5 Ah, 45 A"),
     "pack_lfp": dict(s=16, p=2, extra_kg=0.62),   # heater film, insulation, BMS, shell, connector
-    "pack_li": dict(s=14, p=3, extra_kg=0.62),
+    "pack_li": dict(s=14, p=3, extra_kg=0.904),   # ColdCell CCL-CAL-001 K: 3.844 kg less 2.940 kg of cells
+    "pack_li_assumed": dict(s=14, p=3, extra_kg=0.62),   # what Lift assumed when decision 2 was posed
+    "preheat_wh_pack": 35.6,      # ColdCell CCL-CAL-001 K: pre-heat energy of one variant pack from -20 C
     "n_packs": 2,
     # tether
     "v_tether": 400.0,            # V DC at the ground supply, fixed
@@ -59,11 +61,13 @@ A = {
 }
 
 # bought or sibling parts: (BOM line, kg each, qty) for the flying aircraft
+# Power wiring: 0.650 kg as before plus 0.124 kg for the two pack input and two frame output leads, 8 AWG with
+# AS150 plugs, that moved from the Kitewright Core to this harness (KWC-DDR-003). The Core stays at 1.0 kg (0.996 kg).
 BOUGHT = {
     "Hub spacers and standoffs": (3, 0.005, 8), "Arm lock pins": (9, 0.030, 4), "Motors": (10, 0.450, 8),
     "Motor controllers": (11, 0.110, 8), "Propellers": (12, 0.110, 8), "Pack straps": (19, 0.030, 4),
     "GNSS mast": (20, 0.060, 1), "Kitewright Core with payload mount": (21, 1.000, 1),
-    "Power wiring": (24, 0.650, 1), "Fasteners, epoxy, dampers": (25, 0.250, 1), "Skid end caps": (16, 0.010, 4),
+    "Power wiring": (24, 0.774, 1), "Fasteners, epoxy, dampers": (25, 0.250, 1), "Skid end caps": (16, 0.010, 4),
 }
 PAYLOAD_BOUGHT = {"float": {"Release unit": 0.08, "Float sling": 0.03, "Rescue float and line bag": 0.85},
                   "tether": {"DC-DC converter": 1.40, "Breakaway connector": 0.15}}
@@ -109,8 +113,8 @@ def results(verbose=False):
     P_lfp = pack(A["cell_lfp"], A["pack_lfp"])
     P_li = pack(A["cell_li"], A["pack_li"])
     R["pack_lfp"], R["pack_li"] = P_lfp, P_li
-    R["packs_kg"] = A["n_packs"] * P_lfp["kg"]
-    R["packs_wh"] = A["n_packs"] * P_lfp["wh"]
+    R["packs_kg"] = A["n_packs"] * P_li["kg"]
+    R["packs_wh"] = A["n_packs"] * P_li["wh"]
     R["ready_kg"] = R["empty_kg"] + R["packs_kg"]
     R["float_module_kg"] = m_cad["fr_plate"] + m_cad["saddles"] + sum(PAYLOAD_BOUGHT["float"].values())
     hanging = A["tether_kg_m"] * A["hover_height"]
@@ -144,36 +148,31 @@ def results(verbose=False):
     R["t_alt_2"] = minutes(R["packs_wh"], R["p_alt_2"], cold=True)
     R["t_hot_5"] = minutes(R["packs_wh"], R["p_hot_5"])
     # pack current
-    R["i_hover"] = R["p_sl_5"] / P_lfp["v"]
-    R["i_cell_hover"] = R["i_hover"] / (A["n_packs"] * A["pack_lfp"]["p"])
+    R["i_hover"] = R["p_sl_5"] / P_li["v"]
+    R["i_cell_hover"] = R["i_hover"] / (A["n_packs"] * A["pack_li"]["p"])
     R["i_cell_climb"] = 1.5 * R["i_cell_hover"]
-    # Li-ion variant (option for R4)
-    li_kg = A["n_packs"] * P_li["kg"]
-    li_wh = A["n_packs"] * P_li["wh"]
-    m5_li = R["empty_kg"] + li_kg + 5.0
-    m2_li = R["empty_kg"] + li_kg + 2.0
-    R["li_packs_kg"], R["li_packs_wh"], R["mtow_5_li"] = li_kg, li_wh, m5_li
-    R["t_sl_5_li"] = minutes(li_wh, hover_power(m5_li, r_sl) + base)
-    R["t_alt_2_li"] = minutes(li_wh, hover_power(m2_li, r_alt) + base, cold=True)
-    R["i_cell_hover_li"] = (hover_power(m5_li, r_sl) + base) / P_li["v"] / (A["n_packs"] * A["pack_li"]["p"])
-    # LFP with three cells in parallel (option B)
-    P3 = pack(A["cell_lfp"], dict(s=16, p=3, extra_kg=0.70))
-    m5_3 = R["empty_kg"] + A["n_packs"] * P3["kg"] + 5.0
-    R["lfp3_packs_kg"], R["mtow_5_lfp3"] = A["n_packs"] * P3["kg"], m5_3
-    R["payload_lfp3"] = A["mtow_limit"] - (R["empty_kg"] + A["n_packs"] * P3["kg"])
-    m_lfp3_cap = R["empty_kg"] + A["n_packs"] * P3["kg"] + R["payload_lfp3"]
-    R["t_sl_lfp3"] = minutes(A["n_packs"] * P3["wh"], hover_power(m_lfp3_cap, r_sl) + base)
-    R["t_alt_2_lfp3"] = minutes(A["n_packs"] * P3["wh"], hover_power(R["empty_kg"] + A["n_packs"] * P3["kg"] + 2.0, r_alt) + base, cold=True)
-    # combinations for the decisions on R1, R2 and R4
-    lite = R["empty_kg"] - A["pocket_saving"]
-    R["empty_lite"] = lite
-    R["mtow_5_lite"] = lite + R["packs_kg"] + 5.0
-    R["t_sl_5_lite"] = minutes(R["packs_wh"], hover_power(R["mtow_5_lite"], r_sl) + base)
-    R["t_alt_2_lite"] = minutes(R["packs_wh"], hover_power(lite + R["packs_kg"] + 2.0, r_alt) + base, cold=True)
-    R["mtow_5_li_lite"] = lite + li_kg + 5.0
-    R["t_sl_5_li_lite"] = minutes(li_wh, hover_power(R["mtow_5_li_lite"], r_sl) + base)
-    R["t_alt_2_li_lite"] = minutes(li_wh, hover_power(lite + li_kg + 2.0, r_alt) + base, cold=True)
-    R["t_sl_45"] = minutes(R["packs_wh"], hover_power(R["ready_kg"] + R["max_payload_sl"], r_sl) + base)
+    # comparison: the design of KWL-CAL-001 v0.1 (LiFePO4 16S2P, fittings unpocketed, 330 x 290 deck, Core leads in the Core)
+    import model as _m
+    before_P = dict(_m.PARAMS, pockets=False, deck=(330.0, 290.0, 3.0), pack=(126.0, 232.0, 85.0))
+    m_before = _m.masses(before_P)
+    made_before = sum(v for k, v in m_before.items() if k not in ("fr_plate", "tm_plate", "saddles"))
+    empty_before = made_before + R["bought_kg"] - 0.124
+    lfp_kg, lfp_wh = A["n_packs"] * P_lfp["kg"], A["n_packs"] * P_lfp["wh"]
+    R["pocket_saving_model"] = sum(m_before[k] - m_cad[k] for k in ("hinge_blocks", "arm_roots", "motor_mounts"))
+    R["deck_growth"] = (m_cad["deck"] + m_cad["guides"]) - (m_before["deck"] + m_before["guides"])
+    P_as = pack(A["cell_li"], A["pack_li_assumed"])
+    CMP = {}
+
+    def case(name, empty, pk_kg, pk_wh):
+        m5, m2 = empty + pk_kg + 5.0, empty + pk_kg + 2.0
+        CMP[name] = dict(mtow_5=m5, payload=A["mtow_limit"] - (empty + pk_kg),
+                         t_sl=minutes(pk_wh, hover_power(m5, r_sl) + base), t_alt=minutes(pk_wh, hover_power(m2, r_alt) + base, cold=True))
+    case("KWL-CAL-001 v0.1: LiFePO4, fittings as first drawn", empty_before, lfp_kg, lfp_wh)
+    case("Decision 1 A only (pockets as modelled), LiFePO4", empty_before - R["pocket_saving_model"], lfp_kg, lfp_wh)
+    case("Both decisions with the 3.56 kg pack Lift assumed", R["empty_kg"], A["n_packs"] * P_as["kg"], A["n_packs"] * P_as["wh"])
+    case("Both decisions as now designed (ColdCell 3.84 kg packs)", R["empty_kg"], R["packs_kg"], R["packs_wh"])
+    R["CMP"] = CMP
+    R["t_sl_45"] = minutes(R["packs_wh"], hover_power(A["mtow_limit"], r_sl) + base)
     # ---- D. thrust margin and motor out (R3, R5)
     pair_max = A["t_max_sl"] * (1 + A["k_lower"])
     for tag, sig, m in (("sl", 1.0, R["mtow_5"]), ("alt", R["sigma_alt"], R["mtow_2"])):
@@ -182,7 +181,7 @@ def results(verbose=False):
         R[f"arm_share_{tag}"] = m / 4.0
         R[f"single_max_{tag}"] = A["t_max_sl"] * sig
     R["motor_p_max"] = hover_power(A["t_max_sl"] * A["n_rotor"], r_sl) / A["n_rotor"] * A["k_coax"] ** -1 * 1.0
-    R["motor_i_max"] = R["motor_p_max"] / (A["pack_lfp"]["s"] * 2.9)
+    R["motor_i_max"] = R["motor_p_max"] / (A["pack_li"]["s"] * 3.3)
     # ---- E. wind (R6)
     drag = 0.5 * r_sl * A["wind"] ** 2 * A["cd_a"]
     R["drag_10"] = drag
@@ -241,8 +240,7 @@ def results(verbose=False):
     R["setup_min"] = 4 * 0.75 + 8 * 0.15 + 2 * 0.5 + 1.0 + 1.5 + 1.0
     R["clearances"] = clr
     # ---- J. temperature (R10)
-    cell = A["cell_lfp"]
-    R["heater_wh"] = 2 * 2.72 * 1.0 * 30.0 / 3.6 / 0.85      # warm 2 x 2.72 kg of cells 30 K (c = 1.0 kJ/kg K), 85 % heater efficiency
+    R["heater_wh"] = A["n_packs"] * A["preheat_wh_pack"]      # ColdCell CCL-CAL-001 K, from -20 C
     # ---- K. cost (R11)
     rows = list(csv.DictReader((ROOT / "bom" / "bom.csv").open()))
     frame = payload = 0.0
@@ -254,7 +252,6 @@ def results(verbose=False):
         else:
             payload += c
     R["cost_frame"], R["cost_payload"] = frame, payload
-    R["cost_li_extra"] = A["n_packs"] * (A["pack_li"]["s"] * A["pack_li"]["p"] * 8.0 - 32 * 4.0)
     R["D"] = D
     return R
 
@@ -266,7 +263,7 @@ REQ = [  # id, requirement, result function, status function
      lambda R: "Met on paper" if R["max_payload_sl"] >= 5.0 else "At risk"),
     ("R3", "Payload at altitude", lambda R: f"Thrust to weight {R['tw_alt']:.2f} at 5,000 m and -20 C with 2 kg ({R['mtow_2']:.1f} kg)",
      lambda R: "Met on paper" if R["tw_alt"] >= 1.6 else "At risk"),
-    ("R4", "Hover time", lambda R: f"{R['t_sl_5']:.1f} min with 5 kg at sea level; {R['t_alt_2']:.1f} min with 2 kg at 5,000 m and -20 C",
+    ("R4", "Hover time", lambda R: f"{R['t_sl_5']:.1f} min with 5 kg at sea level ({R['mtow_5']:.1f} kg); {R['t_alt_2']:.1f} min with 2 kg at 5,000 m and -20 C",
      lambda R: "Not met" if (R["t_sl_5"] < 20 or R["t_alt_2"] < 10) else "Met on paper"),
     ("R5", "Motor-out tolerance", lambda R: f"Thrust to weight with one motor out {R['tw_out_sl']:.2f} at sea level, {R['tw_out_alt']:.2f} at 5,000 m",
      lambda R: "Met on paper" if R["tw_out_alt"] >= 1.15 else "At risk"),
@@ -279,7 +276,7 @@ REQ = [  # id, requirement, result function, status function
     ("R9", "Transport", lambda R: f"Folded {R['fold_z'] / 1000:.2f} x {R['fold_y'] / 1000:.2f} x {R['fold_x'] / 1000:.2f} m; set-up about {R['setup_min']:.0f} min",
      lambda R: "Met on paper" if (R["fold_z"] <= 1200 and R["fold_y"] <= 600 and R["fold_x"] <= 500) or (R["fold_x"] <= 600 and R["fold_y"] <= 500) else "Not met"),
     ("R10", "Operating temperature", lambda R: f"ColdCell heating about {R['heater_wh']:.0f} Wh from the ground supply before take-off; parts rated -20 to +45 C",
-     lambda R: "Met on paper (part ratings)"),
+     lambda R: "At risk: the lithium-ion packs stay under 50 C in a 20 min hover only up to 25 C ambient with their jacket on (ColdCell CCL-CAL-001 K, open decision 6)"),
     ("R11", "Prototype cost", lambda R: f"USD {R['cost_frame']:,.0f} for the aircraft excluding payloads",
      lambda R: f"Over the value-engineering target by USD {R['cost_frame'] - 5000:,.0f}" if R["cost_frame"] > 5000 else "Within the value-engineering target"),
 ]
@@ -288,10 +285,11 @@ REQ = [  # id, requirement, result function, status function
 def main():
     R = results()
     D = R["D"]
-    P = R["pack_lfp"]
+    P = R["pack_li"]
     print("A. Mass (kg)")
     print(f"  made parts from the model {R['made_kg']:.2f}; bought {R['bought_kg']:.2f}; empty {R['empty_kg']:.2f}")
-    print(f"  LiFePO4 pack 16S2P: {P['cells']} cells, {P['kg']:.2f} kg, {P['wh']:.0f} Wh, {P['v']:.1f} V, {P['wh_kg']:.0f} Wh/kg; two packs {R['packs_kg']:.2f} kg, {R['packs_wh']:.0f} Wh")
+    print(f"  ColdCell lithium-ion pack 14S3P: {P['cells']} cells, {P['kg']:.2f} kg, {P['wh']:.0f} Wh, {P['v']:.1f} V, {P['wh_kg']:.0f} Wh/kg; two packs {R['packs_kg']:.2f} kg, {R['packs_wh']:.0f} Wh")
+    print(f"  pockets as modelled save {R['pocket_saving_model']:.3f} kg; deck and guides grew {R['deck_growth']:.3f} kg for the long packs")
     print(f"  ready to fly {R['ready_kg']:.2f}; float module {R['float_module_kg']:.2f}; tether module {R['tether_module_kg']:.2f} (hanging tether {R['tether_hanging_kg']:.2f})")
     print(f"  MTOW with 5 kg {R['mtow_5']:.2f}; with 2 kg {R['mtow_2']:.2f}; tethered {R['mtow_tether']:.2f}; payload allowance {R['max_payload_sl']:.2f}")
     print("B. Air and hover power")
@@ -300,16 +298,10 @@ def main():
     print(f"  disc loading {R['disc_loading']:.0f} N/m2; induced velocity {R['v_induced']:.1f} m/s")
     print("C. Endurance (min)")
     print(f"  SL 5 kg {R['t_sl_5']:.1f}; SL empty {R['t_sl_0']:.1f}; 5,000 m 2 kg -20 C {R['t_alt_2']:.1f}; +45 C 5 kg {R['t_hot_5']:.1f}")
-    print(f"  pack current at hover {R['i_hover']:.0f} A; per cell {R['i_cell_hover']:.1f} A hover, {R['i_cell_climb']:.1f} A climb (cell rating {A['cell_lfp']['amps']:.0f} A)")
-    Pl = R["pack_li"]
-    print(f"  option Li-ion 14S3P x2: {R['li_packs_kg']:.2f} kg, {R['li_packs_wh']:.0f} Wh ({Pl['wh_kg']:.0f} Wh/kg); MTOW {R['mtow_5_li']:.2f}; "
-          f"{R['t_sl_5_li']:.1f} min SL 5 kg, {R['t_alt_2_li']:.1f} min 5,000 m 2 kg; {R['i_cell_hover_li']:.1f} A per cell")
-    print(f"  option LiFePO4 16S3P x2: {R['lfp3_packs_kg']:.2f} kg; MTOW with 5 kg {R['mtow_5_lfp3']:.2f}; payload inside 25 kg {R['payload_lfp3']:.2f}; "
-          f"{R['t_sl_lfp3']:.1f} min SL at that payload, {R['t_alt_2_lfp3']:.1f} min 5,000 m 2 kg")
-    print(f"  option pocketed fittings ({A['pocket_saving']:.2f} kg off): empty {R['empty_lite']:.2f}; MTOW with 5 kg {R['mtow_5_lite']:.2f}; "
-          f"{R['t_sl_5_lite']:.1f} min SL, {R['t_alt_2_lite']:.1f} min 5,000 m")
-    print(f"  option Li-ion and pocketed: MTOW with 5 kg {R['mtow_5_li_lite']:.2f}; {R['t_sl_5_li_lite']:.1f} min SL 5 kg, {R['t_alt_2_li_lite']:.1f} min 5,000 m 2 kg")
-    print(f"  LiFePO4 at the {R['max_payload_sl']:.2f} kg payload allowed by R1: {R['t_sl_45']:.1f} min")
+    print(f"  pack current at hover {R['i_hover']:.0f} A; per cell {R['i_cell_hover']:.1f} A hover, {R['i_cell_climb']:.1f} A climb (cell rating {A['cell_li']['amps']:.0f} A)")
+    for k, v in R["CMP"].items():
+        print(f"  compare: {k}: MTOW with 5 kg {v['mtow_5']:.2f}; payload inside 25 kg {v['payload']:.2f}; {v['t_sl']:.1f} min SL 5 kg, {v['t_alt']:.1f} min 5,000 m 2 kg")
+    print(f"  at the {R['max_payload_sl']:.2f} kg payload allowed by R1: {R['t_sl_45']:.1f} min")
     print("D. Thrust margin and motor out")
     print(f"  T/W SL {R['tw_sl']:.2f}, 5,000 m {R['tw_alt']:.2f}; one motor out SL {R['tw_out_sl']:.2f}, 5,000 m {R['tw_out_alt']:.2f}")
     print(f"  arm share SL {R['arm_share_sl']:.2f} kg vs single motor {R['single_max_sl']:.1f}; 5,000 m {R['arm_share_alt']:.2f} vs {R['single_max_alt']:.2f}")
@@ -334,7 +326,7 @@ def main():
     print("J. Temperature")
     print(f"  pre-heat energy {R['heater_wh']:.0f} Wh")
     print("K. Cost")
-    print(f"  aircraft USD {R['cost_frame']:,.0f}; payloads and ground equipment USD {R['cost_payload']:,.0f}; Li-ion option about USD {R['cost_li_extra']:,.0f} more")
+    print(f"  aircraft USD {R['cost_frame']:,.0f}; payloads and ground equipment USD {R['cost_payload']:,.0f}")
     print("Results against requirements")
     out = ROOT / "docs" / "04-calcs" / "results.csv"
     with out.open("w", newline="") as f:

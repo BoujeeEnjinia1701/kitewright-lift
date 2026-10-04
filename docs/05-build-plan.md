@@ -3,7 +3,7 @@ doc_id: KWL-BLD-001
 title: Kitewright Lift prototype build plan
 project: Kitewright Lift
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-10-03'
 author: Amish Chadha
@@ -13,13 +13,17 @@ revisions:
   date: '2026-10-03'
   author: Amish Chadha
   change: First build plan; design made constructable (KWL-DDR-002)
+- version: "0.2"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: "Round 2 decisions (KWL-DDR-003): deeper pockets in the hinge blocks, root fittings and motor clamps; lithium-ion ColdCell packs on a 290 x 430 mm deck; Core power leads now in Lift's harness"
 ---
 
 # Kitewright Lift prototype build plan
 
 **Plan, not yet built.** How to build the first proof-of-concept prototype, component by component. Building and testing to it is TRL 4 work. Decisions still to be made are kept in the design decisions register (`docs/06-design-decisions.md`), not here.
 
-> **Safety:** This plan builds a 25 kg class aircraft with eight 30 inch propellers, lithium iron phosphate packs and a 400 V tether. Propellers can kill, packs can burn, and the tether carries a dangerous voltage. Every safety stop in section 6 is a hard stop: work does not go on until its conditions are true. Fly only where local rules allow, never near uninvolved people, and never carry or lift a person.
+> **Safety:** This plan builds a 25 kg class aircraft with eight 30 inch propellers, two 680 Wh lithium-ion packs and a 400 V tether. Propellers can kill, lithium-ion packs can burn violently and spread fire from cell to cell, and the tether carries a dangerous voltage. Every safety stop in section 6 is a hard stop: work does not go on until its conditions are true. Fly only where local rules allow, never near uninvolved people, and never carry or lift a person.
 
 ## 1. What you are building
 
@@ -27,7 +31,7 @@ revisions:
 
 *Figure 1. Every component in build order. One of the four arms is shown pulled apart; the others are the same.*
 
-Kitewright Lift is a coaxial eight-motor aircraft: a two-plate carbon hub with the Kitewright Core stack inside, four carbon arms that fold down on machined aluminium hinges, a motor above and below each arm tip, a battery deck with two ColdCell packs on top, skid landing gear, and the Core payload rails underneath. Two payloads are built with it: a line-and-float release and a tether power module with its ground set. Of the 38 lines in the parts list, 16 are made: carbon sheet routed to shape, carbon tube cut and drilled, aluminium fittings machined, two printed saddles and a sewn sling. The rest are bought, and the Core stack and the packs are built to their own designs. The parts are estimated at USD 5,739 for the aircraft and USD 3,716 for the payloads and ground set.
+Kitewright Lift is a coaxial eight-motor aircraft: a two-plate carbon hub with the Kitewright Core stack inside, four carbon arms that fold down on machined aluminium hinges, a motor above and below each arm tip, a battery deck with two ColdCell packs on top, skid landing gear, and the Core payload rails underneath. Two payloads are built with it: a line-and-float release and a tether power module with its ground set. Of the 38 lines in the parts list, 16 are made: carbon sheet routed to shape, carbon tube cut and drilled, aluminium fittings machined, two printed saddles and a sewn sling. The rest are bought, and the Core stack and the packs are built to their own designs. The parts are estimated at USD 6,418 for the aircraft and USD 3,716 for the payloads and ground set.
 
 ## 2. What changed to make it buildable
 
@@ -45,6 +49,9 @@ Kitewright Lift is a coaxial eight-motor aircraft: a two-plate carbon hub with t
 | Float release | A release | Plate, printed saddles, a servo pin release and a sewn sling round a foam float | Bought release, simple made parts |
 | Tether module | Converter and reel | Plate, 4 kW converter, breakaway connector; ground supply, reel and safety set | Fits the same rails; parts if the tether snags |
 | Fittings | Solid blocks | A pocket in each hinge block and a window in each root fitting | Halves their weight |
+| Deeper pockets | Fittings with one pocket or window | Side pockets in the hinge blocks, root fittings and motor clamps, leaving at least 4.5 mm round every hole, boss and face | 0.41 kg lighter in all (Amish's decision 1, KWL-DDR-003) |
+| Packs and deck | Two LiFePO4 packs 126 x 232 x 85 mm on a 330 x 290 mm deck | Two lithium-ion ColdCell packs 90 x 378 x 86 mm on a 290 x 430 mm deck, guides 210 mm long | Hover time (Amish's decision 2, KWL-DDR-003) |
+| Core power leads | Four 8 AWG leads with AS150 plugs inside the Kitewright Core | Part of Lift's harness, soldered to the Core's board pads and tied to its strain-relief bar | The Core's mass (Kitewright Core decision O1, KWC-DDR-003) |
 
 ## 3. Making the components
 
@@ -84,7 +91,9 @@ Sizes are in millimetres unless stated. Carbon sheet and tube: cut with a diamon
 4. Drill the 8.1 mm lock-pin hole, 37 mm up and 68 mm from the inner end.
 5. Tap four M4 holes 10 deep in the top face and four in the bottom face, 6 and 19 mm from the inner end, 15 mm either side.
 6. Mill the 19 x 16 mm lightening pocket through between the tapped holes.
-7. Deburr. The underside of the bridge must be flat and smooth: it carries the arm's lift.
+7. Mill a side pocket into each side face of the bolting end: 4.5 to 23 mm from the inner end, 16.5 to 43.5 mm up from the bottom, 10.5 mm deep, so 4.5 mm stays between it and the through pocket and 4.5 mm round the tapped holes above and below.
+8. Mill 2.5 mm deep pockets into the outside face of each cheek, leaving 4.5 mm of cheek: one from the slot's start to 8.5 mm short of the pivot hole, one above the pivot hole up to 8.5 mm short of the lock-pin hole, and one beyond the pivot hole below the lock-pin hole, each ending 4.5 mm from the top and bottom faces and clear of the bridge (KWL-DWG-104).
+9. Deburr. The underside of the bridge must be flat and smooth: it carries the arm's lift.
 
 **How it fits the parts next to it.**
 
@@ -213,7 +222,8 @@ Build the Core stack, its power bus with the tether input, and its payload mount
 3. Ream the pivot hole 8.05 mm, 12 mm up from the tongue's bottom and 15 mm from its inner end; drill the lock-pin hole 8.1 mm, 35 mm up and 28 mm from the inner end.
 4. Mill the 22 x 24 mm window through the tongue, 41 to 63 mm from its inner end.
 5. Drill two 5.2 mm cross holes through the collar, 15 and 37 mm from its inner end.
-6. Keep the top face of the tongue's outer end flat: it bears on the bridge.
+6. Mill two side pockets 10 mm deep into each face of the tongue, leaving a 10 mm web on its centre line and 4.5 mm round both pin holes and the window: one above the pivot hole inboard of the lock-pin hole, one below the lock-pin hole beyond the pivot hole (KWL-DWG-105).
+7. Keep the top face of the tongue's outer end flat: it bears on the bridge.
 
 **How it fits the parts next to it.**
 
@@ -235,6 +245,7 @@ Build the Core stack, its power bus with the tether input, and its payload mount
 2. Drill four 4.3 mm clamp holes through both halves, 8 mm in from the ends and 4.5 mm in from the sides.
 3. Tap four M4 holes 9 mm deep in each outer face to suit the motors bought (a 35 mm circle on most motors of this class).
 4. Drill a 5.2 mm cross hole through both halves at the motor axis.
+5. Mill a pocket 20.7 mm long, centred on the motor axis between the clamp holes, into each side face of each half: 5.4 mm deep (4.5 mm left to the bore) and from 4.5 mm off the split face to 4.5 mm short of the motor face.
 
 **How it fits the parts next to it.**
 
@@ -256,14 +267,14 @@ Buy four stainless M8 shoulder bolts with an 8 mm shoulder 50 mm long, nyloc nut
 
 ![Making sketch: battery deck](../cad/drawings/KWL-DWG-103.png)
 
-**What it is and what it is made from.** The shelf the packs sit on: 3 mm carbon sheet, 330 x 290 mm with 35 mm corner cuts.
+**What it is and what it is made from.** The shelf the packs sit on: 3 mm carbon sheet, 290 x 430 mm (290 mm across the aircraft's front-to-back line, 430 mm side to side) with 35 mm corner cuts, sized for the 378 mm long lithium-ion packs.
 
 **How to make it.**
 
 1. Route the outline.
 2. Drill four 3.3 mm standoff holes 130 mm from the centre on the forward, back, left and right lines, and a 17 mm hole at the centre.
-3. Cut eight 30 x 4 mm strap slots, two beside each long side of each pack, centred 48 and 108 mm either side of the centre, their inner edges 116.5 mm from the centre line.
-4. Drill six 4.3 mm guide holes at the centre and 110 mm either side, 131 mm out on each side.
+3. Cut eight 30 x 4 mm strap slots beside the ends of the packs, centred 30 and 90 mm either side of the centre, their inner edges 189.5 mm from the centre line.
+4. Drill six 4.3 mm guide holes at the centre and 95 mm either side, 204 mm out on each side.
 
 **How it fits the parts next to it.**
 
@@ -277,7 +288,7 @@ Buy four stainless M8 shoulder bolts with an 8 mm shoulder 50 mm long, nyloc nut
 
 ![Making sketch: pack guide](../cad/drawings/KWL-DWG-111.png)
 
-Cut two pieces of 20 x 20 x 2 mm aluminium angle 250 mm long, round the ends, and drill three 4.3 mm holes on the flat leg's centre line, 15, 125 and 235 mm along. Fit with the upright leg outboard. Check they sit flat on the deck.
+Cut two pieces of 20 x 20 x 2 mm aluminium angle 210 mm long, round the ends, and drill three 4.3 mm holes on the flat leg's centre line, 10, 105 and 200 mm along. Fit with the upright leg outboard. Check they sit flat on the deck.
 
 ### 3.16 Pack straps and GNSS mast (bought)
 
@@ -285,7 +296,7 @@ Buy four 25 mm cam-buckle straps 600 mm long with rubber backing, and a 16 mm ca
 
 ### 3.17 ColdCell packs (built to the ColdCell design)
 
-Build two ColdCell packs to the ColdCell build plan: 16 cells in series, two in parallel, LiFePO4 26650 power cells of about 3.0 Ah, with the external film heater, insulation, BMS with charge lockout and shell. Lift needs each pack to fit 126 x 232 x 85 mm and to plug into the Core power bus.
+Two ColdCell lithium-ion packs to the ColdCell variant design (CCL-DWG-002): 14 cells in series, three in parallel, 21700 high-power cells of about 4.5 Ah, with the external film heaters, insulation, 14S BMS with charge lockout and 60 C discharge cut-out, and shell; 50.4 V, 680 Wh, about 3.84 kg, 378 x 90 x 86 mm, with an 8 AWG pigtail ending in an AS150 half. ColdCell has not yet issued a build plan for this variant (how its cells are joined is still open there), so the packs are the last item to be made.
 
 ### 3.18 Payload plates (two)
 
@@ -351,7 +362,7 @@ Four M4 x 10 screws up through the plate into each block, slot facing out along 
 
 ![Step 2](05-build-plan/step-02.png)
 
-Core stack on its four dampers; the four 60 mm spacers on M3 screws from below. Route the eight controller leads and the payload cable to the Core before the roof goes on.
+Core stack on its four dampers; the four 60 mm spacers on M3 screws from below. Route the eight controller leads and the payload cable to the Core before the roof goes on. Lift's harness now carries the Core's four power leads (8 AWG, two pack inputs and two frame outputs with opposite-gender AS150 plugs): with the Core lid off, pass them in through its rear grommets, solder each to its marked pad on the Core's power board, refit the lid and tie them to the Core's strain-relief bar. **Hold point:** check the polarity of every lead at its plug with a meter.
 
 ### Step 3: Fit the top hub plate
 
@@ -417,7 +428,7 @@ Mast foot on the deck centre; lead the cable down through the deck and top plate
 
 ![Step 13](05-build-plan/step-13.png)
 
-Slide each pack between its guide and the centre gap, close its two straps, and plug it into the Core power bus. **Hold point:** packs go on only after the safety stop for first power (section 6).
+Slide each pack between its guides, close its two straps, and plug its AS150 pigtail into a pack input lead of the harness. **Hold point:** packs go on only after the safety stop for first power (section 6).
 
 ### Step 14: Slide in the float release payload
 
@@ -441,7 +452,7 @@ Take the payload off. For each arm, pull the lock pin, swing the arm down 90 deg
 
 | Check | Requirement | How | Pass when |
 | --- | --- | --- | --- |
-| Weigh ready to fly, then with each payload | R1, R2 | Hanging scale | Mass recorded against R1 with the payload fitted |
+| Weigh ready to fly, then with each payload | R1, R2 | Hanging scale | Mass recorded against R1 with the payload fitted (estimate 21.3 kg ready to fly) |
 | Fold and pack | R9 | Fold, place in a 1.2 x 0.6 x 0.5 m case, unfold and time the set-up | Fits the case; set-up in 10 min or less |
 | Hinge proof load | R5 (safety) | Each arm on CalRig at 117 N m (1.5 times full thrust) for 1 min | No movement at the stop, no crack, no yield |
 | First power-up, propellers off | R10 | Core on the bench supply, then the packs; every motor turns the right way at low throttle | Each motor turns the right way; no fault on any controller |
@@ -455,7 +466,7 @@ Take the payload off. For each arm, pull the lock pin, swing the arm down 90 deg
 ## 6. Safety stops
 
 1. **Before any machining or cutting of carbon.** Dust extraction or a wet cut and a dust mask; carbon dust is an irritant and conducts electricity, so keep it away from the electronics.
-2. **Before the first power-up.** Propellers off. The Core is powered from a current-limited bench supply first. Packs are charged and handled to ColdCell's rules: never charged below their lockout temperature, charged on a non-flammable surface with a lithium-rated extinguisher or sand to hand.
+2. **Before the first power-up.** Propellers off. The Core is powered from a current-limited bench supply first. Packs are charged and handled to ColdCell's rules: never charged below their lockout temperature, charged on a non-flammable surface with a lithium-rated extinguisher or sand to hand. The lithium-ion packs hold 680 Wh each: charge, pre-heat and store them in a fire-resistant container, never unattended, and never fly them above 25 C ambient with their jackets on until ColdCell's warm-weather question is settled.
 3. **Before the first flight.** Every hinge proof-loaded on CalRig (section 5) and inspected; every lock pin in and flagged; propellers balanced and checked for cracks; failsafes for loss of link and low battery set and tested; nobody within 15 m; a written arming and keep-out procedure followed.
 4. **Before energising the tether.** Ground supply earthed, insulation monitor and residual-current protection working, emergency stop tested, the tether laid clear of people, roads, water currents and power lines, and the breakaway fitted at the aircraft. Nobody touches the tether or the module while the supply is on. First tethered hovers at 10 m; never above 50 m.
 5. **Before any payload drop.** Nobody under the aircraft except the person the float is for, who is approached from at least 10 m up; the float's line is tied to the float only. The release is tested on the ground first, with the aircraft unpowered.
@@ -475,5 +486,5 @@ Take the payload off. For each arm, pull the lock pin, swing the arm down 90 deg
 - `cad/drawings/KWL-DWG-001` (general arrangement), `KWL-DWG-002` (folded) and `KWL-DWG-101` to `KWL-DWG-114` (making sketches).
 - `docs/04-calcs/01-sizing.md` and `docs/04-calcs/sizing.py` (KWL-CAL-001).
 - `bom/bom.csv` (parts, specifications and indicative prices).
-- `docs/decisions/0001-trl2-review-decisions.md` and `docs/decisions/0002-design-for-construction.md`.
+- `docs/decisions/0001-trl2-review-decisions.md`, `docs/decisions/0002-design-for-construction.md` and `docs/decisions/0003-requirement-decisions-round2.md`.
 - `cad/src/build_plan_media.py` (every picture in this plan).

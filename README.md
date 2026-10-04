@@ -4,7 +4,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/kitewright-lift/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/kitewright-lift/actions/workflows/reuse.yml)
 
-**Area:** Aerial robotics · **TRL:** 3 of 9 (proof of concept on paper; design constructable) · **Value-engineering target:** USD 5,000; estimated cost of the constructable design USD 5,739 (USD 739 over the target) · **Difficulty:** 4 of 5
+**Area:** Aerial robotics · **TRL:** 3 of 9 (proof of concept on paper; design constructable) · **Value-engineering target:** USD 5,000; estimated cost of the constructable design USD 6,418 (USD 1,418 over the target) · **Difficulty:** 4 of 5
 
 [Design precis](docs/02-concept.md) · [Requirements](docs/03-requirements.md) · [Calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [General arrangement](cad/drawings/KWL-DWG-001.pdf) · [3D viewer](media/viewer.html)
 
@@ -67,13 +67,13 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [d
 
 | Quantity | Value |
 | --- | --- |
-| Take-off mass | 20.5 kg ready to fly; 25.5 kg with a 5 kg payload |
-| Thrust to weight | 2.83 at sea level; 1.94 at 5,000 m and -20 °C with 2 kg; 1.51 there with a motor out |
-| Hover time (LiFePO4 packs, 614 Wh) | 8.9 min at sea level with 5 kg; 7.1 min at 5,000 m with 2 kg |
-| Tethered hover | 3.0 kW from a 400 V ground supply over 60 m of tether |
+| Take-off mass | 21.3 kg ready to fly; 26.3 kg with a 5 kg payload |
+| Thrust to weight | 2.74 at sea level; 1.87 at 5,000 m and -20 °C with 2 kg; 1.46 there with a motor out |
+| Hover time (ColdCell lithium-ion packs, 1,361 Wh) | 18.9 min at sea level with 5 kg; 15.0 min at 5,000 m with 2 kg |
+| Tethered hover | 3.1 kW from a 400 V ground supply over 60 m of tether |
 | Folded | 0.84 x 0.48 x 0.45 m, gear on |
 
-Two results are open for decision (take-off mass with 5 kg, and hover time); see the [design decisions register](docs/06-design-decisions.md).
+Amish decided the first two open results on 2026-10-03: deeper pockets in the machined fittings and a lithium-ion ColdCell variant (KWL-DDR-003). Hover time more than doubled, but the aircraft still weighs 26.3 kg with a 5 kg payload; that and hot-weather operation are open questions in the [design decisions register](docs/06-design-decisions.md).
 
 ## Key components
 
@@ -106,7 +106,7 @@ The [prototype build plan](docs/05-build-plan.md) (KWL-BLD-001) takes a capable 
 >
 > The tether carries 400 V DC: isolated, monitored ground supply with an emergency stop; nobody handles a live tether.
 >
-> Lithium battery packs can catch fire after a crash, over-charge or cold charging; follow ColdCell safety rules.
+> Lift flies two 680 Wh lithium-ion ColdCell packs. Lithium-ion packs can catch fire violently after a crash, puncture, over-charge or cold charging, and a failed cell can set its neighbours off; follow ColdCell's safety rules, charge and store them in a fire-resistant container, never unattended, and keep a crashed pack outside and watched for 24 h.
 >
 > Never carry or lift people. Suspended loads and lines must have a release that the pilot can operate at any time, and nobody stands under a suspended load. The float's line is never tied to the aircraft; drops are made from 10 m or higher.
 >
