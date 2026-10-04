@@ -1,4 +1,9 @@
-"""Kitewright Lift product appearance model (build123d), TRL 3, constructable design (KWL-DDR-002).
+"""Kitewright Lift product appearance model (build123d), TRL 3, constructable design (KWL-DDR-002) with
+Amish's decisions 34A and 35A of 2026-10-03 (KWL-DDR-003): the lightened hinge blocks, root fittings and
+shorter motor clamps come straight from model.py, and the packs are the lithium-ion ColdCell variant.
+Round-3 decisions of 2026-10-04 (KWL-DDR-004), also straight from model.py: two ColdCell packs as drawn
+(410 x 94 x 94 mm) side by side on the re-sized, raised deck, and the Kitewright Core hung under the
+bottom hub plate to the family envelope with the float release on a payload shoe.
 
 For photoreal renders only (.kit/export_views.py, then .kit/photoreal.py on Amish's Mac). Every
 part is the model.py solid itself, flying-ready with the line-and-float release payload; colours and
@@ -26,14 +31,14 @@ HERO_EL, HERO_AZ = 22, -40
 RENDER_VIEWS = [
     {"name": "hero", "groups": ["shell", "context"], "explode": False, "el": HERO_EL, "az": HERO_AZ,
      "note": "Product render from the front right and above (about 22 deg elevation): coaxial X8 on its skid gear "
-             "with the line-and-float release under the hub and two ColdCell packs on the deck, and a 1.75 m person "
+             "with the line-and-float release under the hub and two lithium-ion ColdCell packs side by side on the raised deck, and a 1.75 m person "
              "standing beside it"},
     {"name": "exploded", "groups": ["shell"], "explode": True, "el": 20, "az": -50,
-     "note": "Exploded view from the front right and above (about 20 deg elevation): packs, deck, top plate and Core "
-             "stack lifted; gear, payload mount and float release lowered; arms, motors and propellers in place"},
+     "note": "Exploded view from the front right and above (about 20 deg elevation): packs, deck and top plate lifted; "
+             "Kitewright Core, its rail, gear and float release lowered; arms, motors and propellers in place"},
     {"name": "detail", "groups": ["internal"], "explode": False, "el": 18, "az": -60,
-     "note": "Detail of one arm hinge from the front right and above (about 18 deg elevation): hinge block between "
-             "the hub plates, root fitting, pivot bolt, red-flagged lock pin and the stop bridge the arm lifts against"},
+     "note": "Detail of one arm hinge from the front right and above (about 18 deg elevation): lightened hinge block between "
+             "the hub plates, pocketed root fitting, pivot bolt, red-flagged lock pin and the stop bridge the arm lifts against"},
 ]
 
 LOOK = {  # key: (colour, material class, exploded offset)
@@ -47,8 +52,8 @@ LOOK = {  # key: (colour, material class, exploded offset)
     "struts": ("#1F2328", "plastic", (0, 0, -330)), "skids": ("#1F2328", "plastic", (0, 0, -480)),
     "deck": ("#33373E", "plastic", (0, 0, 320)), "guides": ("#B8BEC6", "metal", (0, 0, 400)),
     "straps": ("#F59E0B", "fabric", (0, 0, 700)), "mast": ("#E5E7EB", "plastic", (0, 0, 820)),
-    "core": ("#6D28D9", "plastic", (0, 0, 100)), "rails": ("#9333EA", "painted", (0, 0, -180)),
-    "ds014": ("#9333EA", "painted", (0, 0, -180)), "paylock": ("#DC2626", "painted", (0, -160, -180)),
+    "core": ("#6D28D9", "plastic", (0, 0, -150)), "rails": ("#9333EA", "painted", (0, 0, -240)),
+    "ds014": ("#9333EA", "painted", (0, 0, -240)), "paylock": ("#DC2626", "painted", (0, -160, -240)),
     "packs": ("#2563EB", "plastic", (0, 0, 560)), "fr_plate": ("#A3A9B3", "metal", (0, 0, -360)),
     "saddles": ("#E5E7EB", "plastic", (0, 0, -440)), "release": ("#1D4ED8", "plastic", (0, 0, -440)),
     "sling": ("#FACC15", "fabric", (0, 0, -520)), "float": ("#F97316", "rubber", (0, 0, -600)),

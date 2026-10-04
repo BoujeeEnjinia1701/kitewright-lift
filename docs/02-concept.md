@@ -3,9 +3,9 @@ doc_id: KWL-PRC-001
 title: Kitewright Lift design precis
 project: Kitewright Lift
 doc_type: Precis
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-10-03'
+date: '2026-10-04'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -20,7 +20,11 @@ revisions:
 - version: "0.3"
   date: '2026-10-03'
   author: Amish Chadha
-  change: "Round 2 decisions (KWL-DDR-003): pocketed fittings, ColdCell lithium-ion packs, Core leads in the harness; numbers from KWL-CAL-001 v0.2"
+  change: Amish's decisions 34A and 35A (KWL-DDR-003); lighter fittings, lithium-ion ColdCell packs, frame-to-Core leads; numbers from KWL-CAL-001 v0.2
+- version: "0.4"
+  date: '2026-10-04'
+  author: Amish Chadha
+  change: Amish's round-3 decisions 8A, 9A and 10A (KWL-DDR-004); ColdCell's packs as drawn on a raised deck, the Core to the family envelope, payload shoes, rated payload 3.2 kg; numbers from KWL-CAL-001 v0.3
 ---
 
 # Kitewright Lift design precis
@@ -35,13 +39,13 @@ A multirotor frame for the Kitewright family that hovers, lifts, winches and fli
 
 Kitewright Lift is a coaxial X8: four carbon arms on a two-plate carbon hub, each arm carrying one motor on top of its tip and one underneath, with 30 inch folding propellers turning opposite ways. If any one motor stops, its partner on the same arm keeps that corner flying, and the autopilot shares the load among the other arms, so the aircraft can still hover and land.
 
-Each arm hinges on a machined aluminium block at a hub corner and folds down for transport. In flight the lift on the arm presses the arm's root fitting up against a stop bridge on the hinge block, so the arm cannot fold under power even if its lock pin were left out; the ball-lock pin only stops the arm drooping on the ground. Folded, with the propeller blades turned back along the arms, the aircraft measures about 0.84 x 0.48 x 0.45 m and fits the 1.2 x 0.6 x 0.5 m case of R9 with its landing gear on.
+Each arm hinges on a machined aluminium block at a hub corner and folds down for transport. In flight the lift on the arm presses the arm's root fitting up against a stop bridge on the hinge block, so the arm cannot fold under power even if its lock pin were left out; the ball-lock pin only stops the arm drooping on the ground. Folded, with the propeller blades turned back along the arms, the aircraft measures about 0.88 x 0.48 x 0.45 m and fits the 1.2 x 0.6 x 0.5 m case of R9 with its landing gear on.
 
-The Kitewright Core stack (autopilot, radios, power bus) sits between the hub plates on rubber dampers. Two ColdCell packs sit on a carbon deck above, held by guides and cam straps, with the GNSS mast between them. Under the hub, the Core payload mount takes any payload on a standard plate: the plate slides into two slotted rails until its plug seats in the DS-014 socket, and a ball-lock pin passes through both rails and the plate's lug. Two payloads are designed here: the line-and-float release, which drops a foam float with 30 m of floating line to a person in water, and the tether module, which turns 400 V DC from a ground supply into the 51 V bus for hours of hover as a lookout or radio relay.
+The Kitewright Core (autopilot, radios, power bus) hangs under the bottom hub plate to the family mounting envelope, its lid standing up through an opening into the hub. Two ColdCell packs, 410 x 94 x 94 mm and 4.46 kg each, sit side by side on a carbon deck raised above the upper rotors, held by guides and cam straps, with the GNSS mast between them. Under the Core, any Kitewright payload slides onto the Core's rail on its own payload shoe until it meets the front stops, two locking pins drop into the shoe, and the Core's DS-014 pigtail is plugged into the payload. Two payloads are designed here: the line-and-float release, which drops a foam float with 30 m of floating line to a person in water, and the tether module, which turns 400 V DC from a ground supply into the 51 V bus for hours of hover as a lookout or radio relay.
 
 ![Cutaway of Kitewright Lift](../media/cutaway.png)
 
-*Figure 2. Cutaway on the centre line: Core stack between the hub plates, packs on the deck above, the payload on the rails below.*
+*Figure 2. Cutaway on the centre line: the Core under the bottom plate with its lid up in the hub, the packs on the raised deck, the payload shoe on the Core's rail.*
 
 ## Components
 
@@ -51,9 +55,9 @@ The Kitewright Core stack (autopilot, radios, power bus) sits between the hub pl
 | 2 | Arm hinges | Machined clevis blocks with stop bridge, 8 mm pivot bolt and ball-lock pin; arms fold down |
 | 3 | Arms | 40 mm carbon tubes bonded and bolted into aluminium root fittings and motor clamps |
 | 4 | Motors, controllers and propellers | Eight motors of the 10 kg static thrust class, 80 A controllers on the arms, 30 x 10 folding propellers |
-| 5 | Kitewright Core stack | Autopilot, GNSS, radios and the ColdCell power bus with a tether input, unchanged from the Core design |
-| 6 | Battery deck and ColdCell packs | Two ColdCell lithium-ion 14S3P heated packs (680 Wh each) on a 290 x 430 mm carbon deck above the hub; the harness carries the Core's pack and frame leads |
-| 7 | Payload mount | The Core's slotted rails, payload pin and DS-014 socket under the bottom plate |
+| 5 | Kitewright Core | Autopilot, GNSS, radios and the power bus with a tether input, unchanged from the Core design; hung under the hub to the family envelope |
+| 6 | Battery deck and ColdCell packs | Two 14S3P lithium-ion heated packs (ColdCell variant for Lift) on a carbon deck above the hub, with Lift's own leads to the Core |
+| 7 | Payload rail | The Core's rail, two locking pins and DS-014 pigtail under the Core plate |
 | 8 | Line-and-float release | Fail-closed servo pin release, webbing sling, foam float with 30 m of line |
 | 9 | Tether module and ground set | 4 kW onboard converter and breakaway; 400 V ground supply, 60 m tether, reel, insulation monitor and emergency stop |
 | 10 | Landing gear | Four carbon struts and two skids, 450 mm apart, in machined blocks |
@@ -71,7 +75,7 @@ All decided on 2026-10-03 under Amish's pre-approvals (KWL-DDR-001 and KWL-DDR-0
 - **Arms fold down against a stop.** Lift holds each arm against a fixed bridge; the lock pin never carries flight loads.
 - **Controllers on the arms**, so only two power leads per arm cross the hinge.
 - **Fixed skid gear** that stays on when folded; the folded motors clear the skids and the ground.
-- **One payload plate** for every payload, on the Core's rails, pin and socket.
+- **One payload shoe** for every payload, to the Core's drawing KWC-DWG-106, inside the Core's 88 mm payload neck.
 - **Fixed-voltage tether** (400 V DC) with an isolated onboard converter and a breakaway, clear of adaptive-voltage tether patents.
 - **No winch** until its patent screen is done.
 
@@ -84,21 +88,22 @@ From KWL-CAL-001 (`docs/04-calcs/sizing.py`). All are estimates; nothing has bee
 | Quantity | Value | Assumptions |
 | --- | --- | --- |
 | Motor spacing; propellers | 1,240 mm diagonal; 30 inch, 115 mm tip gap, 170 mm coaxial gap | `cad/src/model.py` |
-| Empty mass (no packs, no payload) | 13.6 kg | Made parts 5.86 kg from the model, pocketed fittings; motors 450 g, controllers 110 g, propellers 110 g, Core 1.0 kg, wiring with the Core leads 0.77 kg |
-| Two ColdCell packs | 7.7 kg, 1,361 Wh | Lithium-ion 14S3P of 21700 cells, 3.84 kg and 680 Wh each (ColdCell CCL-CAL-001 K) |
-| Take-off mass with 5 kg | 26.3 kg (R1 not met) | 21.3 kg ready to fly |
-| Hover power, sea level, 5 kg | 3.5 kW | Coaxial factor 1.28, figure of merit 0.65, drive efficiency 0.80, 50 W avionics and payload |
-| Hover time, sea level, 5 kg | 18.9 min | 80 % of pack energy used |
-| Hover time, 5,000 m and -20 C, 2 kg | 15.0 min | Air density 0.743 kg/m3; ColdCell delivers 85 % in the cold |
-| Thrust to weight | 2.74 at sea level; 1.87 at 5,000 m | 10 kg per motor at full throttle, lower rotor 80 % |
-| One motor out | 2.13 at sea level; 1.46 at 5,000 m | Partner motor alone on the failed arm |
+| Empty mass (no packs, no payload) | 12.9 kg | Made parts 5.08 kg from the model; motors 450 g, controllers 110 g, propellers 110 g, Core 0.99 kg, frame-to-Core leads 0.12 kg |
+| Two ColdCell packs | 8.92 kg, 1,361 Wh | ColdCell's 14S3P lithium-ion pack as drawn, 410 x 94 x 94 mm, 4.46 kg each |
+| Take-off mass with the rated payload | 24.98 kg with 3.2 kg (R1 limit 25 kg) | 21.78 kg ready to fly; float release 1.46 kg, tether module 3.13 kg |
+| Hover power, sea level, rated payload | 3.2 kW | Coaxial factor 1.28, figure of merit 0.65, drive efficiency 0.80, 50 W avionics and payload |
+| Hover time, sea level, rated payload | 20.4 min | 80 % of pack energy used |
+| Hover time, 5,000 m and -20 C, 2 kg | 14.5 min | Air density 0.743 kg/m3; ColdCell delivers 85 % in the cold |
+| Thrust to weight | 2.88 at sea level; 1.84 at 5,000 m | 10 kg per motor at full throttle, lower rotor 80 % |
+| One motor out | 2.24 at sea level; 1.43 at 5,000 m | Partner motor alone on the failed arm |
 | Arm load at full thrust | 177 N; 2.6 kN on the stop bridge | 30 mm from pivot to bridge |
-| Tethered hover | 3.1 kW on the bus; 3.5 kW from the ground; 25 V drop and 215 W lost in the tether | 400 V, 60 m, 2 x 0.75 mm2, 95 % converter |
+| Tethered hover | 3.2 kW on the bus; 3.6 kW from the ground; 25 V drop and 225 W lost in the tether | 400 V, 60 m, 2 x 0.75 mm2, 95 % converter |
 | Float drop | Expected miss 2.2 m from 10 m in 10 m/s wind | 2 m position hold; drift aimed off to 30 % |
-| Folded size | 0.84 x 0.48 x 0.45 m | From the folded model |
-| Estimated cost | USD 6,418 for the aircraft; USD 3,716 for the payloads and ground set | `bom/bom.csv`, indicative prices |
+| Folded size | 0.88 x 0.48 x 0.45 m | From the folded model |
+| Warm-weather limit | Full hover flights to about 27 °C ambient | ColdCell's 50 °C warning, kept until measured (decision 9A) |
+| Estimated cost | USD 6,627 for the aircraft; USD 3,976 for the payloads and ground equipment | `bom/bom.csv`, indicative prices |
 
-Value-engineering target: USD 5,000. Estimated cost of the constructable design: USD 6,418 (USD 1,418 over the target).
+Value-engineering target: USD 5,000. Estimated cost of the constructable design: USD 6,627 (USD 1,627 over the target).
 
 ![Power flow in hover](../media/flow.png)
 
@@ -131,14 +136,14 @@ From the preliminary patent, trademark and prior-art screen (not legal advice):
 
 > **Safety:** The arm hinges carry the whole lift. Each hinge is proof-loaded to 1.5 times its full-thrust moment before first flight, and inspected for cracks at the pivot and stop bridge after any hard landing.
 
-> **Safety:** Lift now flies two 680 Wh lithium-ion ColdCell packs (KWL-DDR-003). Lithium-ion cells can burn violently after a crash, a puncture, an over-charge or a cold charge, venting flammable gas and spreading from cell to cell. Follow ColdCell's rules: no charging below its 5 C lockout, charge and store in a fire-resistant container on a non-flammable surface, never unattended, keep a crashed pack outside and watched for 24 h, and do not fly the packs above 25 C ambient with their jackets on until the warm-weather question is settled. The packs cannot travel with air passengers.
+> **Safety:** Lithium-ion packs can burn fiercely after a crash, an over-charge or a cold charge. Follow ColdCell's rules for its lithium-ion variant: charging blocked below 5 °C, heater cut-outs, a fuse on every cell, charging only in the fire-resistant charging box on a non-flammable surface, and a crashed pack kept outside and watched for 24 h.
 
 > **Safety:** The tether carries 400 V DC, a dangerous voltage. The ground supply is isolated, with an insulation monitor, residual-current protection, an emergency stop and an earth spike; the tether never crosses roads, water currents or power lines, and nobody handles it while live. The breakaway at the aircraft parts it if it snags.
 
-> **Safety:** Never carry or lift a person. The float's line is tied to the float only, never to the aircraft. Nobody stands under a payload. Drops are made from 10 m or higher, because the downwash (about 7.6 m/s estimated at 10 m) can push a person in water under or knock someone off balance on snow or a roof.
+> **Safety:** Never carry or lift a person. The float's line is tied to the float only, never to the aircraft. Nobody stands under a payload. Drops are made from 10 m or higher, because the downwash (about 7.4 m/s estimated at 10 m) can push a person in water under or knock someone off balance on snow or a roof.
 
 > **Safety:** Loss of link or thrust in thin air can mean a crash in remote terrain; failsafes are set and tested at each altitude band, and the first high flights are made over ground where a crash harms nobody.
 
 ## Open questions
 
-None for design. Decisions 1 and 2 were taken by Amish on 2026-10-03 (KWL-DDR-003). Two new questions are posed to him in the design decisions register (`docs/06-design-decisions.md`): the take-off mass after those decisions (26.3 kg with 5 kg) and hot-weather operation with the lithium-ion packs.
+None for design. Amish decided the Kitewright family reconciliation on 2026-10-04 (KWL-DDR-004): ColdCell's packs as drawn, the 25 kg limit kept and the payload rated at what fits (3.2 kg). R4's sea-level case was restated the same day to "with the rated payload" as a consequence of 8A (KWL-DDR-005), so nothing is open.

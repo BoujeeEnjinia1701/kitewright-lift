@@ -4,7 +4,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/kitewright-lift/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/kitewright-lift/actions/workflows/reuse.yml)
 
-**Area:** Aerial robotics · **TRL:** 3 of 9 (proof of concept on paper; design constructable) · **Value-engineering target:** USD 5,000; estimated cost of the constructable design USD 6,418 (USD 1,418 over the target) · **Difficulty:** 4 of 5
+**Area:** Aerial robotics · **TRL:** 3 of 9 (proof of concept on paper; design constructable) · **Value-engineering target:** USD 5,000; estimated cost of the constructable design USD 6,627 (USD 1,627 over the target) · **Difficulty:** 4 of 5
 
 [Design precis](docs/02-concept.md) · [Requirements](docs/03-requirements.md) · [Calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [General arrangement](cad/drawings/KWL-DWG-001.pdf) · [3D viewer](media/viewer.html)
 
@@ -57,7 +57,7 @@ Full problem statement: [docs/01-problem.md](docs/01-problem.md)
 
 ## Concept
 
-A coaxial X8 for the Kitewright family: four carbon arms that fold down on machined hinges, a motor above and below each arm tip with 30 inch propellers, the Kitewright Core stack inside a two-plate carbon hub, two ColdCell packs on a deck above, and the Core payload rails below. Lift holds each arm up against a fixed stop in flight, so a missed lock pin cannot let an arm fold. Two payloads are designed with it: a line-and-float release and a 400 V tether module for hours of hover.
+A coaxial X8 for the Kitewright family: four carbon arms that fold down on machined hinges, a motor above and below each arm tip with 30 inch propellers, the Kitewright Core hung under a two-plate carbon hub to the family envelope, two ColdCell packs on a raised deck above, and payloads on the Core's rail below. Lift holds each arm up against a fixed stop in flight, so a missed lock pin cannot let an arm fold. Two payloads are designed with it: a line-and-float release and a 400 V tether module for hours of hover.
 
 ![Kitewright Lift concept with a 1.75 m person for scale](media/hero.png)
 
@@ -67,13 +67,13 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md) · Requirements: [d
 
 | Quantity | Value |
 | --- | --- |
-| Take-off mass | 21.3 kg ready to fly; 26.3 kg with a 5 kg payload |
-| Thrust to weight | 2.74 at sea level; 1.87 at 5,000 m and -20 °C with 2 kg; 1.46 there with a motor out |
-| Hover time (ColdCell lithium-ion packs, 1,361 Wh) | 18.9 min at sea level with 5 kg; 15.0 min at 5,000 m with 2 kg |
-| Tethered hover | 3.1 kW from a 400 V ground supply over 60 m of tether |
-| Folded | 0.84 x 0.48 x 0.45 m, gear on |
+| Take-off mass | 21.8 kg ready to fly; 25.0 kg with the rated 3.2 kg payload |
+| Thrust to weight | 2.88 at sea level; 1.84 at 5,000 m and -20 °C with 2 kg; 1.43 there with a motor out |
+| Hover time (two ColdCell lithium-ion packs, 1,361 Wh) | 20.4 min at sea level with the rated payload; 14.5 min at 5,000 m with 2 kg |
+| Tethered hover | 3.6 kW from a 400 V ground supply over 60 m of tether |
+| Folded | 0.88 x 0.48 x 0.45 m, gear on |
 
-Amish decided the first two open results on 2026-10-03: deeper pockets in the machined fittings and a lithium-ion ColdCell variant (KWL-DDR-003). Hover time more than doubled, but the aircraft still weighs 26.3 kg with a 5 kg payload; that and hot-weather operation are open questions in the [design decisions register](docs/06-design-decisions.md).
+No decisions are open: R4's sea-level case now reads "with the rated payload" (2026-10-04); see the [design decisions register](docs/06-design-decisions.md).
 
 ## Key components
 
@@ -81,7 +81,7 @@ Amish decided the first two open results on 2026-10-03: deeper pockets in the ma
 - Machined arm hinges with stop bridge, pivot bolt and lock pin
 - Carbon arm tubes, root fittings and coaxial motor clamps
 - Eight motors, controllers and 30 inch folding propellers
-- Kitewright Core stack and payload mount
+- Kitewright Core, hung under the hub to the family envelope
 - Two ColdCell packs
 - Skid landing gear
 - Line-and-float release payload
@@ -90,7 +90,7 @@ Amish decided the first two open results on 2026-10-03: deeper pockets in the ma
 
 ## Building the prototype
 
-The [prototype build plan](docs/05-build-plan.md) (KWL-BLD-001) takes a capable maker through every component in build order, with a making sketch for each made part, close-ups of the joints and a picture for every assembly step. The carbon plates are CNC routed, the carbon tubes cut and drilled, and the aluminium hinge, arm and gear fittings machined; the Core stack and packs are built to their own designs. The hinges are proof-loaded before first flight, and the plan's safety stops cover first power, first flight, the tether and payload drops. It is a plan, not yet built.
+The [prototype build plan](docs/05-build-plan.md) (KWL-BLD-001) takes a capable maker through every component in build order, with a making sketch for each made part, close-ups of the joints and a picture for every assembly step. The carbon plates are CNC routed, the carbon tubes cut and drilled, and the aluminium hinge, arm and gear fittings machined; the Core and packs are built to their own designs. The hinges are proof-loaded before first flight, and the plan's safety stops cover first power, first flight, the tether and payload drops. It is a plan, not yet built.
 
 ![Every component in build order](docs/05-build-plan/overview.png)
 
@@ -106,7 +106,7 @@ The [prototype build plan](docs/05-build-plan.md) (KWL-BLD-001) takes a capable 
 >
 > The tether carries 400 V DC: isolated, monitored ground supply with an emergency stop; nobody handles a live tether.
 >
-> Lift flies two 680 Wh lithium-ion ColdCell packs. Lithium-ion packs can catch fire violently after a crash, puncture, over-charge or cold charging, and a failed cell can set its neighbours off; follow ColdCell's safety rules, charge and store them in a fire-resistant container, never unattended, and keep a crashed pack outside and watched for 24 h.
+> Lithium battery packs can catch fire after a crash, over-charge or cold charging; follow ColdCell safety rules.
 >
 > Never carry or lift people. Suspended loads and lines must have a release that the pilot can operate at any time, and nobody stands under a suspended load. The float's line is never tied to the aircraft; drops are made from 10 m or higher.
 >

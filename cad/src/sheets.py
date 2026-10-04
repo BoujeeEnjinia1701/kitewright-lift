@@ -1,4 +1,5 @@
-"""Kitewright Lift drawing sheets, Rev P2 (TRL 3, constructable design KWL-DDR-002).
+"""Kitewright Lift drawing sheets: KWL-DWG-001 Rev P3 and KWL-DWG-002 Rev P2 (TRL 3, constructable design
+KWL-DDR-002 with Amish's decisions 34A and 35A of 2026-10-03, KWL-DDR-003).
 
 Run from the repo root:  python cad/src/sheets.py [ga|folded]
     KWL-DWG-001  general arrangement, flying with the float release payload
@@ -17,6 +18,7 @@ from drawing import Sheet  # noqa: E402
 from model import PARAMS as P, assembly, derived  # noqa: E402
 
 DATE_P1 = "2026-10-03"
+DATE_R3 = "2026-10-04"   # round 3 decisions (KWL-DDR-004)
 
 
 def safe_project_views(part, workdir, line_weight=0.3):
@@ -54,11 +56,12 @@ def ga():
     work = ROOT / "cad" / "drawings" / "_ga_views"
     views = safe_project_views(assembly(P, "float"), work)
     s = Sheet(project="Kitewright Lift", title="Coaxial X8 rescue multirotor: general arrangement", dwg_no="KWL-DWG-001",
-              rev="P3", author="Amish Chadha", date=DATE_P1, scale=None,
+              rev="P4", author="Amish Chadha", date=DATE_R3, scale=None,
               material="Carbon plates and tubes, 6061-T6 fittings; bought parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA from the TRL 3 model", DATE_P1, "AC"),
                          ("P2", "KWL-DDR-002: design for construction", DATE_P1, "AC"),
-                         ("P3", "KWL-DDR-003: pocketed fittings, lithium-ion packs, 290 x 430 deck", DATE_P1, "AC")])
+                         ("P3", "KWL-DDR-003: lighter fittings, Li-ion packs", DATE_P1, "AC"),
+                         ("P4", "KWL-DDR-004: ColdCell packs, raised deck, Core envelope", DATE_R3, "AC")])
     s.add_ortho(views)
     s.add_svg(views["iso"], 276, 32, 140, 90, label="Isometric view", sublabel="Not to scale; float release payload fitted")
     s.add_notes("Main dimensions and interfaces (mm)", [
@@ -68,9 +71,10 @@ def ga():
         f"Arm tube carbon {P['tube'][0]:.0f} x {P['tube'][1]:.0f}; hinge pivot {P['pivot'][0]:.0f} from centre",
         f"Arm stop bridge {D['stop_lever']:.0f} outboard of the pivot; 8 lock pin",
         f"Upper rotor plane {D['z_upper_prop']:.0f} up; lower rotor plane {D['z_lower_prop']:.0f} up",
-        f"Deck {P['deck'][0]:.0f} x {P['deck'][1]:.0f}, top {D['z_deck_top']:.0f} up; packs {P['pack'][0]:.0f} x {P['pack'][1]:.0f} x {P['pack'][2]:.0f}",
+        f"Deck {P['deck'][0]:.0f} x {P['deck'][1]:.0f} x 2, top {D['z_deck_top']:.0f} up; 2 ColdCell packs {P['pack'][0]:.0f} x {P['pack'][1]:.0f} x {P['pack'][2]:.0f}",
         f"Skids {2 * P['skid_half']:.0f} long, {2 * P['skid_y']:.0f} apart; struts 20 carbon",
-        f"Payload rails 260 long, 112 apart (Core); payload plate {P['pplate'][1]:.0f} wide",
+        "Core plate under the bottom plate: M4 on 220 x 130; opening 200 x 112",
+        "Payload shoe 184 x 128 x 5 (KWC-DWG-106) on the Core rail",
         f"GNSS puck top {D['z_mast_top']:.0f} above the ground",
         "Arms fold down about the pivot: see KWL-DWG-002",
         "Third-angle; front view from -Y; X forward; arms on the diagonals",
@@ -86,10 +90,11 @@ def folded():
     bb = asm.bounding_box()
     views = safe_project_views(asm, work)
     s = Sheet(project="Kitewright Lift", title="Coaxial X8 rescue multirotor: folded for transport", dwg_no="KWL-DWG-002",
-              rev="P2", author="Amish Chadha", date=DATE_P1, scale=None,
+              rev="P3", author="Amish Chadha", date=DATE_P1, scale=None,
               material="As KWL-DWG-001. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Folded arrangement from the constructable model", DATE_P1, "AC"),
-                         ("P2", "KWL-DDR-003: pocketed fittings, lithium-ion packs, larger deck", DATE_P1, "AC")])
+                         ("P2", "KWL-DDR-003: lighter fittings, shorter clamp", DATE_P1, "AC"),
+                         ("P3", "KWL-DDR-004: ColdCell packs, raised deck", DATE_R3, "AC")])
     s.add_ortho(views)
     s.add_svg(views["iso"], 276, 32, 140, 90, label="Isometric view", sublabel="Not to scale; payload removed")
     s.add_notes("Folding (mm)", [

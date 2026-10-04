@@ -1,75 +1,119 @@
 # Review note: Kitewright Lift
 
-## Session 2026-10-03: round 2 requirement decisions applied
+## 2026-10-04: Amish's round-3 decisions carried out
 
-Amish, 2026-10-03: "i approve all of the 47 recommendations provided by you. Execute them." For this repo that is decision 1 (global 18, R1 and R2) option A and decision 2 (global 19, R4) option A; Kitewright Core's decision O1 (global 17) option B also lands here, because the Core's pack and frame leads move into Lift's harness. Recorded in `docs/decisions/0003-requirement-decisions-round2.md` (KWL-DDR-003). ColdCell (CCL-DDR-003) and Kitewright Core (KWC-DDR-003) were edited in the same round so the three repos agree. Work stayed inside the TRL 3 cap: no test articles, test plans, firmware, PCB layouts, build-log entries or purchasing lists.
+Amish Chadha (owner) on 2026-10-04: "For round 3, I agree with all your proposed recommendations". For Lift that is the Kitewright family reconciliation: 8A (ColdCell's pack as drawn is the Lift pack), 9A (ColdCell's 50 °C warning and the warm-weather limit) and 10A (AS150 everywhere, one Core mounting envelope). Kitewright Core, Kitewright Range, ColdCell, AvalancheScout and LakeWatch were brought to the same table in the same session. Recorded in `docs/decisions/0004-family-reconciliation.md` (KWL-DDR-004) and the register (`docs/06-design-decisions.md` v0.3). Nothing was committed or pushed.
 
-### What was done
+### Changes made
 
-- `cad/src/model.py`: side pockets in the hinge blocks (bolting end and cheeks), the root fittings (tongue) and the motor clamps, each leaving at least 4.5 mm round every hole, boss and face (`pockets`, `web`); pack envelope changed to ColdCell's lithium-ion variant, 90.4 x 378 x 85.8 mm; deck 290 x 430 mm (was 330 x 290); guides 210 mm at X -95, 0 and 95 mm. Constructability checks pass in the flying (float and tether) and folded states: no overlaps, nothing loose.
-- `docs/04-calcs/sizing.py`, `results.csv` and `01-sizing.md` (KWL-CAL-001 v0.2): packs at ColdCell's estimate (3.84 kg, 680 Wh); pocket saving and deck growth taken from the model; wiring 0.77 kg with the Core leads; pre-heat from ColdCell; R10 now flags the packs' warm-weather limit; Table 5 compares the design before, between and after the decisions with the estimate they were posed on.
-- `bom/bom.csv`: lines 4, 5 and 7 (pockets, USD 120 in all), 17 (deck), 18 (guides), 21 (Core note), 23 (lithium-ion packs, USD 662 each) and 24 (wiring with the Core leads, USD 150).
-- Regenerated: STEP and STL; `cad/drawings/KWL-DWG-001` Rev P3 and `KWL-DWG-002` Rev P2; making sketches KWL-DWG-101 to 114, joints and steps; concept media (`media/hero.png`, `cutaway.png`, `exploded.png`, `flow.png`, `concept-blueprint.png` and `.pdf`, `model.glb` at 1.0 mm linear and 0.35 rad angular deflection).
-- `docs/05-build-plan.md` (KWL-BLD-001 v0.2), `docs/03-requirements.md` (KWL-REQ-001 v0.3), `docs/02-concept.md` (KWL-PRC-001 v0.3), `docs/06-design-decisions.md` (KWL-DEC-001 v0.2), `README.md`, `cad/src/sheets.py`, `cad/src/build_plan_media.py`, `cad/src/concept_media.py`, `project.yaml` (trl_evidence). `budget_usd` stays 5,000: it is a value-engineering target, not a limit (STANDARDS section 18).
+- **8A, battery deck re-sized for two ColdCell packs of 410 x 94 x 94 mm and 4.46 kg** (`cad/src/model.py`): packs side by side in Y with a 30 mm gap for the GNSS mast; deck 430 x 280 x 2 mm carbon (was 330 x 290 x 3) with four 120 x 60 mm windows; on 60 mm standoffs (were 25) so its underside is 9 mm above the upper blades, with the deck's corner cuts 12.7 mm and the pack corners 22.7 mm outside the upper discs in plan; guides 15 x 15 x 1.5 angle, 340 mm; four 900 mm straps round both packs. Deck check added: 19 MPa at mid-span and 27 MPa through the windows at a 3 g landing.
+- **8A, R1 and R2 restated** (`docs/03-requirements.md` v0.4, Amish quoted): 25 kg take-off limit kept (US 55 lb class); payload rated at what fits; both designed payloads must fit.
+- **9A:** ColdCell's 50 °C warning kept; warm-weather limit (about 27 °C ambient for a full hover flight; at 45 °C the warning after about 6 min) in the build plan's operating note (section 3.17) and in R10.
+- **10A, the Core to the family envelope** (new `cad/src/core_envelope.py`, the same file as Range's): the Core plate hangs under the bottom hub plate on its 8 mm spacers (M4 on 220 x 130 mm), its lid up through a 200 x 112 mm opening that replaces the damper, rail and socket holes; the top plate has holes over the lid's mast boss (26 mm), SMA bulkheads (12 mm) and switch (20 mm); the Core's GNSS receiver goes on Lift's deck mast and its antennas on SMA extension leads to the gear struts. Payloads hang from 184 x 128 x 5 mm payload shoes (KWC-DWG-106) inside the Core's 88 mm neck: float saddles 80 mm wide and 55 mm tall; the tether converter on four 34 mm posts, 20 mm ahead of the pin knobs. AS150 on every pack and bus lead. New model checks: payload parts outside the neck zone, the Core's parts against the hub.
+- Constructability checks pass in all three states (flying with the float release, flying with the tether module, folded): no overlaps, nothing out of contact. STEP and STL regenerated.
+- **BOM** (`bom/bom.csv`, 39 lines): lines 1, 2, 3, 17, 18, 19, 21, 22, 23, 24, 26, 27 and 31 changed, each with a price basis; new line 39, ColdCell's ground equipment (USD 255, not in R11).
+- Documents: `docs/04-calcs/01-sizing.md` v0.3 with `sizing.py` and `results.csv`, `docs/05-build-plan.md` v0.3, `docs/02-concept.md` v0.4, `docs/03-requirements.md` v0.4, `docs/06-design-decisions.md` v0.3, `README.md`.
 
-### Requirement status
+### New result per requirement (KWL-CAL-001 v0.3, estimates)
 
-| ID | Before | After |
+| ID | Before (v0.2) | Now | Target |
+| --- | --- | --- | --- |
+| R1 | 25.2 kg with 5 kg, not met | 24.98 kg with the rated 3.2 kg; 21.78 kg ready to fly: met on paper as restated | 25 kg or less with the rated payload |
+| R2 | 4.77 kg inside R1, at risk | Rated 3.2 kg; float release 1.46 kg and tether module 3.13 kg (on payload shoes) both fit; met on paper as restated | About 3.3 kg, both payloads fit |
+| R3 | Thrust to weight 1.97 | 1.84 at 5,000 m with 2 kg: met on paper | 2 kg at 5,000 m |
+| R4 | 20.1 and 16.1 min | 20.4 min at sea level with the rated payload, 14.5 min at 5,000 m with 2 kg: met on paper (R4 restated to the rated payload, open decision 4 closed) | 20 and 10 min |
+| R5 | 2.22 and 1.53 | 2.24 and 1.43: met on paper | Controlled descent |
+| R7 | Converter margin 1.37 | 1.25 at 3.2 kW: met on paper | 2 h on the tether |
+| R9 | 0.84 x 0.48 x 0.45 m | 0.88 x 0.48 x 0.45 m: met on paper | 1.2 x 0.6 x 0.5 m case |
+| R10 | Part ratings | Part ratings; full hover flights to about 27 °C ambient (9A) | -20 to +45 °C |
+| R11 | USD 6,335 | Value-engineering target: USD 5,000. Estimated cost of the constructable design: USD 6,627 (USD 1,627 over the target) | Reported against the target |
+
+R6 and R8 are unchanged and met on paper. Mass: ready to fly 1.55 kg heavier (packs +1.80 kg; deck, guides and bottom plate opening -0.29 kg; standoffs and antenna leads +0.04 kg). Cost: ColdCell's packs USD 268 more (USD 762 each against USD 628 assumed), deck USD 5, straps USD 4, antenna leads USD 15. `budget_usd` unchanged.
+
+### Kitewright interface table
+
+The same table stands in the review notes of Kitewright Core, Kitewright Lift, Kitewright Range, ColdCell, AvalancheScout and LakeWatch (Amish's decision 10A, 2026-10-04). The Core's drawings are the reference for the mounting envelope.
+
+| Interface | Family figure | Source |
 | --- | --- | --- |
-| R1 | Not met, 25.5 kg with 5 kg | **Not met, 26.3 kg with 5 kg** (21.3 kg ready to fly) |
-| R2 | At risk, 4.5 kg inside R1 | **At risk, 3.7 kg inside R1** |
-| R3 | Met on paper, thrust to weight 1.94 | Met on paper, 1.87 |
-| R4 | Not met, 8.9 and 7.1 min | **Met at 5,000 m (15.0 min); not met at sea level with 5 kg (18.9 min, 1.1 min short)** |
-| R5 | Met on paper, 2.20 and 1.51 | Met on paper, 2.13 and 1.46 |
-| R7 | Met on paper, margin 1.35 | Met on paper, margin 1.28 |
-| R10 | Met on paper (part ratings) | **At risk**: packs under 50 °C only to 25 °C ambient with jackets on |
-| R11 | USD 739 over the target | USD 1,418 over the target |
-| R6, R8, R9 | Met on paper | Unchanged |
+| Power connector | AS150 on every pack lead and on each frame's power harness (two pack inputs, two frame outputs, opposite genders); no XT60 or XT90 on the bus | Decision 10A; KWC-DDR-001, D3 |
+| Core mounting envelope and hole pattern | Core plate 240 x 150 x 2 mm hung under the frame's lower deck on four 12 mm OD x 8 mm corner spacers; four M4 holes on a 220 x 130 mm pattern; a 200 x 112 mm opening in the deck for the lid; lid 168 x 92 mm, its top 55 mm above the deck's underside (GNSS mast boss 69 mm); where a frame has no 240 mm clear above the lid, the antennas and GNSS receiver go to frame positions on extension cables; rail, pin blocks and pin knobs to 47 mm below the plate top; payload shoe 184 x 128 x 5 mm, payload neck 88 mm wide from the shoe to 30 mm below the rail lips | KWC-DWG-001 Rev P2, KWC-DWG-106 |
+| Bus voltage | 18 to 60 V at the Core's pack inputs. Lift: 14S lithium-ion, 42.0 to 58.8 V (50.4 V nominal). Range: 6S lithium-ion, 18.0 to 25.2 V (21.6 V nominal) | KWC-DDR-001, D3 |
+| Pack size and mass | Lift: two ColdCell 14S3P lithium-ion packs, 410 x 94 x 94 mm, 4.46 kg and 680 Wh each (CCL-DWG-002). Range: two 6S3P lithium-ion packs of 5.0 Ah cells, 138 x 75 x 82 mm, 1.40 kg and 324 Wh each (Range's figure; ColdCell has not yet drawn this pack) | Decision 8A; CCL-CAL-001 K; KWR-CAL-001 |
+| Core mass | 0.99 kg: avionics, radios, GNSS, rail and locking pins; packs, payload shoe and the frame's harness excluded | Core R9; KWC-DDR-003 |
 
-Why the decisions did not deliver the 24.9 kg they were posed with (KWL-CAL-001 v0.2, Table 5): the pockets, drawn to the option's own rule of 4 to 5 mm walls and webs, save 0.41 kg rather than 1.04 kg (0.63 kg short); ColdCell's design of the variant weighs 3.84 kg a pack rather than the 3.56 kg assumed (0.57 kg for two); the long packs need a larger deck and guides (0.12 kg); and the Core's leads (0.12 kg) now ride in Lift's harness while the Core allowance stays 1.0 kg.
+### Pictures changed
 
-### Cost
+KWL-DWG-001 general arrangement Rev P4 and KWL-DWG-002 folded Rev P3; making sketches KWL-DWG-101 (top plate), 102 (bottom plate), 103 (deck), 111 (guide), 112 (payload shoe) and 113 (saddle) to Rev P2, the others redrawn unchanged; build plan overview, all eleven joints (joint-07 now the payload shoe on the Core rail, joint-11 the Core under the hub) and all sixteen steps (step 2 the hub spacers, step 6 the Core hung under the hub, step 12 the mast and antenna leads); concept media (`media/hero.png`, `cutaway.png`, `exploded.png`, `flow.png`, `concept-blueprint.png` and `.pdf` Rev P3, `model.glb`). Looked at: the general arrangement and joint-11. `cad/src/product_model.py` takes the new parts from `model.py`; render scenes exported to `/home/claude/renders/kitewright-lift` (hero, exploded, detail). The photoreal renders, captions and cards in `media/` predate this change and need a re-run on Amish's Mac.
 
-Value-engineering target: USD 5,000. Estimated cost of the constructable design: USD 6,418 (USD 1,418 over the target); before: USD 5,739. Changes: packs USD 484, pockets USD 120, Core leads USD 60, deck USD 15. Payloads and ground set unchanged at USD 3,716.
+### Open decision 4 closed: R4 restated (consequence of 8A)
 
-### Cross-repo consistency
+Amish Chadha, 2026-10-04: "For round 3, I agree with all your proposed recommendations". Because decision 8A rates the payload at what fits inside R1's 25 kg, R4's sea-level case no longer names 5 kg. **R4 restated** (`docs/03-requirements.md` v0.5, Amish quoted): "at least 20 min with the rated payload (R2) at sea level and 10 min with 2 kg at 5,000 m and -20 °C". Result unchanged: 20.4 min at sea level with the rated 3.2 kg and 14.5 min at 5,000 m with 2 kg, **met on paper**. Records only: no change to the model, calculations, BOM or pictures. Recorded in `docs/decisions/0005-r4-rated-payload.md` (KWL-DDR-005) and the register (`docs/06-design-decisions.md` v0.4, open decision 4 moved to Decisions made).
 
-- **ColdCell**: Lift's packs, deck, BOM line 23 and calculations use ColdCell's variant figures (CCL-DDR-003, CCL-DWG-002): 14S3P, 50.4 V, 680 Wh, 3.84 kg, 378 x 90 x 86 mm, USD 662, AS150 pigtail. The earlier interface assumption (126 x 232 x 85 mm, 3.3 kg LiFePO4) is withdrawn.
-- **Kitewright Core**: Lift's harness carries the Core's two pack input and two frame output leads (8 AWG, AS150), soldered to the Core's board pads and tied to its strain-relief bar (KWC-DDR-003); the Core allowance stays 1.0 kg (Core estimate 0.996 kg). Core open decision O2 (60 V power board against the 58.8 V full 14S pack) bears on Lift; the controllers are rated 16S (67 V).
+**Open decisions.** None. Nothing in carrying out 8A, 9A, 10A or open decision 4 needs Amish.
 
-### New questions (Proposed, awaiting Amish)
+### Safety
 
-**3. R1, R2 and R4 after round 2.**
-- State: 26.3 kg with a 5 kg payload; 3.7 kg of payload fits inside 25 kg; hover 18.9 min at sea level with 5 kg and 15.0 min at 5,000 m with 2 kg.
-- Option A: rate the sea-level payload at 3.5 kg for the first prototype (R2 restated): 24.8 kg, R1 met; about 20.5 min at sea level with 3.5 kg (estimate).
-- Option B: a second lightening round: 2 mm carbon hub plates and deck (estimate 0.42 kg, after a stiffness check), ColdCell open decision 4 A (estimate 0.16 to 0.20 kg for two packs) and stress-sized pockets below 4.5 mm webs after a structural check; about 25.6 kg before that check, so still not met.
-- Option C: raise R1 to 26.5 kg; 25 kg is a common threshold in drone rules (India's Small class, for one), so this changes the aircraft's regulatory class and the pitch.
-- **Recommendation: A for the first prototype, with B pursued as value engineering** and revisited when the fittings and packs are weighed at TRL 4.
+- Two packs hold 1.36 kWh of lithium-ion cells: ColdCell's charge blocking below 5 °C, heater cut-outs, cell fuses and fire-resistant charging box apply in full, and the 50 °C warning lands the aircraft; on hot days flights are short.
+- The deck now sits above the upper rotors and outside their discs in plan; the deck standoffs and strap buckles are checked tight before every flight.
+- The tether module's margin under 25 kg is 0.07 kg: weigh it at TRL 4 before any tethered flight with it.
 
-**4. R10 in hot weather.**
-- State: the lithium-ion packs make 71 W each in hover; with their jackets on they stay under 50 °C for 20 minutes only up to 25 °C ambient; at 45 °C they would pass the typical 60 °C discharge limit.
-- Option A: adopt ColdCell's summer configuration (top foam out, vented lid) above 15 °C (ColdCell open decision 6). Option B: rate Lift to 25 °C until measured. Option C: shorter hovers above 25 °C, landing when ColdCell reports 50 °C.
-- **Recommendation: A**, following ColdCell open decision 6.
+### Cross-repo actions
 
-### Safety notes
-
-- **Lithium-ion fire energy.** Lift now carries 1.36 kWh in two lithium-ion packs, about twice the LiFePO4 packs' energy, in cells that vent flammable gas and can drive their neighbours into thermal runaway. After a crash or hard landing the packs come out and are watched outside for 24 hours (safety stop 7); they are charged, pre-heated and stored in a fire-resistant container on a non-flammable surface, never unattended; ColdCell's 5 C charge lockout, heater cut-offs and new 60 C discharge cut-out apply in full; they cannot travel with air passengers and ship only as dangerous goods. Until question 4 is settled they are not flown above 25 °C ambient with their jackets on (added to safety stop 2).
-- **Hinges.** The deeper pockets leave the stop bridge, the pivot and lock-pin bosses and the cheek at the pivot untouched, so the full-thrust stresses of KWL-CAL-001 F are unchanged; the 4.5 mm cheek walls beside the pockets are first-order only and the 1.5 times proof load of every hinge before first flight stays a hard stop.
-- **Harness.** The Core leads are now soldered into the Core when Lift's harness is fitted; polarity and the opposite-gender keying are checked at a hold point (build plan step 2).
-- **Rotor clearance.** The longer packs and larger deck bring the upper rotor discs to 35 mm from the packs and 19 mm from the deck in plan (was 58 and 47 mm); still clear on paper, with less margin than before.
-
-### Re-render
-
-Yes. The hero geometry changed visibly: the two packs are now long and narrow (90 x 378 mm, running side to side) on a deck 140 mm wider, and the fittings carry pockets. `media/render-hero.png`, the exploded and detail renders and the cards should be re-rendered on Amish's Mac.
-
-### Checks
-
-- `python cad/src/model.py --check`: no overlaps and nothing loose in all three states.
-- `python .kit/render.py --check`: see this session's report; the only failure left is the missing `media/render-hero.png` storefront image of this working copy.
+- **AvalancheScout:** the reconciled Lift puts its power harness at the Core's power board, about 12 mm above the payload shoe, and its eight motors 0.62 m out; AvalancheScout's noise check against this Lift is in its own review note. Twisting and choking Lift's pack and frame leads (its earlier option C) is now worth planning into Lift's harness at TRL 4.
+- Nothing else outstanding: Core, Range, ColdCell and LakeWatch carry the same interface table.
 
 ### Recommended next step
 
-Amish decides open decisions 3 and 4 (and, in ColdCell, decisions 3 to 6 on the variant pack). The design is then ready for TRL 4 when the phase allows: AltiRig thrust runs, hinge proof loads on CalRig, first power-up and tethered hovers.
+Nothing awaits Amish. The design is ready for TRL 4 when the phase allows, as before (AltiRig thrust runs, hinge proof loads, first power-up and tethered hovers).
+
+## 2026-10-03: Amish's requirement decisions carried out
+
+Amish Chadha, 2026-10-03: "i agree with all the 46 recommendations you provided. please proceed." For Lift that decides item 34 (open decision 1) and item 35 (open decision 2) as recommended, option A on both; Kitewright Core's decision 33B also moves the frame power leads out of the Core and into Lift. Recorded in `docs/decisions/0003-requirement-decisions.md` (KWL-DDR-003) and the register (`docs/06-design-decisions.md`, KWL-DEC-001 v0.2). Kitewright Core, Kitewright Range and ColdCell were being updated in parallel by other sessions and were not edited.
+
+**Changes made, each with its new result.**
+
+- **34A, lighter fittings** (`cad/src/model.py`): hinge blocks with side pockets in the bolting end, an 18 x 46 mm window through both cheeks, and the cheeks cut away below the pivot outboard and under the stop bridge to a 15 mm top rail (0.29 to 0.19 kg each); root fittings with 12.5 mm side pockets leaving a 5 mm web and 5 mm bosses round both holes, and a 22 x 28 mm window (0.29 to 0.24 kg each); motor clamps shortened from 50 to 40 mm (0.24 to 0.19 kg each), so the arm tubes are cut to 405 mm. Saving 0.78 kg against the 1.04 kg estimated when the decision was posed: the root fittings' thin collar and the full-width bosses at their two holes leave less to remove. Highest new stress 35 MPa in the top rail under the bridge (a third of yield is 80 MPa); the bridge itself, 41 MPa, is unchanged. All constructability checks pass in the three states (flying with the float release, flying with the tether module, folded): no overlaps, nothing out of contact.
+- **35A, lithium-ion ColdCell packs** (BOM line 23): 14S3P of 21700 high-power cells (4.5 Ah, 45 A), 50.4 V nominal, about 680 Wh and 3.56 kg each, in the same 126 x 232 x 85 mm envelope; ColdCell's charge blocking below 5 °C, heater cut-outs, cell-level fuse and fire-resistant charging box apply in full. USD 628 each (USD 208 more). **R4 met on paper: 20.1 min at sea level with 5 kg (target 20) and 16.1 min at 5,000 m and -20 °C with 2 kg (target 10).** About 11 A per cell in hover against 45 A.
+- **Frame-to-Core power leads** (Core decision 33B; BOM line 24, build plan section 3.17a): 8 AWG wire and four AS150 halves, about 0.12 kg and USD 60; the Core is taken at 0.99 kg.
+
+**Results against the requirements (KWL-CAL-001 v0.2).**
+
+| Requirement | Before | Now | Status |
+| --- | --- | --- | --- |
+| R1, take-off mass with 5 kg (25 kg or less) | 25.5 kg | 25.2 kg; 20.2 kg ready to fly | Not met, by about 0.2 kg (decision 3 below) |
+| R2, 5 kg at sea level | 4.5 kg inside R1 | 4.77 kg inside R1; thrust to weight 2.85 | At risk (decision 3 below) |
+| R3, 2 kg at 5,000 m | Thrust to weight 1.94 | 1.97 | Met on paper |
+| R4, hover time (20 and 10 min) | 8.9 and 7.1 min | 20.1 and 16.1 min | Met on paper |
+| R5, motor out | 2.20 and 1.51 | 2.22 and 1.53 | Met on paper |
+| R7, tethered endurance | Converter margin 1.35 | 1.37 | Met on paper |
+| R10, temperature | 53 Wh pre-heat | 58 Wh pre-heat | Met on paper |
+| R11, cost | USD 5,739 | Value-engineering target: USD 5,000. Estimated cost of the constructable design: USD 6,335 (USD 1,335 over the target) | Reported against the target |
+
+R6, R8 and R9 are unchanged and met on paper. `budget_usd` is unchanged.
+
+**Pictures changed.** KWL-DWG-001 general arrangement Rev P3 and KWL-DWG-002 folded Rev P2; making sketches KWL-DWG-104 (hinge block), 105 (root fitting), 106 (arm tube) and 107 (motor mount) Rev P2; the build plan overview, joints and steps redrawn from the model (step 13 now plugs the packs into the frame leads); concept media (`media/hero.png`, `cutaway.png`, `exploded.png`, `flow.png`, `concept-blueprint.png` and `.pdf` Rev P2, `model.glb`). `docs/05-build-plan.md` v0.2 (sections 2, 3.2, 3.5, 3.9, 3.10, 3.11, 3.17, new 3.17a, step 13, safety stop 2), `docs/04-calcs/01-sizing.md` v0.2, `docs/03-requirements.md` v0.3, `docs/02-concept.md` and `README.md` figures. Appearance model (`cad/src/product_model.py`) takes the lightened parts from `model.py`; scenes re-exported to `/home/claude/renders/kitewright-lift` (hero, exploded, detail). The photoreal renders on Amish's Mac predate this change and should be re-rendered.
+
+**Decision for Amish.**
+
+*Decision 3: R1 and R2, take-off mass with a 5 kg payload, after decisions 34A and 35A.* State: the aircraft weighs 25.2 kg with a 5 kg payload, about 0.23 kg over R1; inside R1 it carries 4.77 kg. Cause: the lightened fittings saved 0.78 kg rather than the estimated 1.04 kg, the lithium-ion packs add 0.44 kg and the frame-to-Core leads 0.12 kg. R1 sits at the 25 kg line that matters for permissions (the US Part 107 class is under 55 lb, 24.9 kg), so restating R1 upward has a cost beyond the number.
+
+| Option | Effect on R1 and R2 | Cost | Mass |
+| --- | --- | --- | --- |
+| A: rate the sea-level payload at 4.7 kg (restate R2 as "4.7 kg on the core mount at sea level"); the TRL 4 weigh-in sets the final rating | R1 met at 24.9 kg; R2 met as restated; R4 20.3 min. The float release (1.6 kg) and tether module (3.3 kg) both fit | None | None |
+| B: lightening windows in the battery deck (two 80 x 160 mm under the packs) and the top hub plate (four 60 x 50 mm), and rate the payload at 4.9 kg | R1 met at 24.95 kg with 4.9 kg; deck and plate stiffness to be checked | About USD 15 more routing (estimate) | About 0.18 kg less |
+| C: restate R1 to 25.5 kg and keep the 5 kg payload | Both met as restated | None | None, but above the 24.9 kg (55 lb) line, so more permission paperwork at test sites |
+
+**Recommendation: A.** It costs nothing, every payload designed so far is well under 4.7 kg, it keeps Lift inside the 25 kg class, and the real mass from the TRL 4 weigh-in (bought masses are class estimates) decides whether the full 5 kg can be restored. Listed in the register as open decision 3, "Proposed, awaiting Amish".
+
+**Cross-repo actions** (not edited here):
+
+- **ColdCell:** add and confirm the lithium-ion variant for Lift (decision 35A): 14S3P of 21700 high-power cells, 4.5 Ah and 45 A, about 680 Wh and 3.56 kg, in the 126 x 232 x 85 mm envelope, 85 % of rated energy at -20 °C with the heater running; charge blocking below 5 °C, heater cut-outs, cell-level fuse and fire-resistant charging box. Lift's R4 margin at sea level is 0.1 min, so a lower energy figure from ColdCell would put R4 at risk again.
+- **Kitewright Core:** Lift now supplies the pack and frame leads (8 AWG, AS150) soldered to the Core's pads (decision 33B), and takes the Core at about 0.99 kg.
+
+**Safety.** Lithium-ion packs carry more fire energy than the LiFePO4 packs first planned: the build plan's section 3.17 and safety stop 2 now require ColdCell's charge blocking below 5 °C, heater cut-outs, cell fuses and charging only in the fire-resistant box, and a polarity and insulation check of the new frame-to-Core leads before the first pack is plugged in. The lightened hinges keep every stress under a third of yield and are still proof-loaded to 117 N m before first flight.
+
+**Recommended next step.** Amish decides decision 3; ColdCell confirms its lithium-ion variant. The design is then ready for TRL 4 when the phase allows (unchanged from the TRL 3 recommendation below).
 
 ## Session 2026-10-03: TRL 3 (kit 1.7.0, /to-trl3 under Amish's pre-approvals)
 
@@ -194,3 +238,7 @@ Amish, 2026-10-03: "start with the first 14 repos from the list of 29 projects. 
 ## 2026-10-03: photoreal renders
 
 Rendered with Blender Cycles on Amish's Mac from `cad/src/product_model.py`; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` made with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes and `render.py --check` has no FAIL.
+
+## 2026-10-04: photoreal renders redone after the round-2 and round-3 decisions
+
+Views: hero, exploded, detail; cards regenerated; image_qc passes and `render.py --check` has no FAIL.

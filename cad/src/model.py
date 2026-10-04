@@ -8,9 +8,11 @@ The aircraft is a coaxial X8: four folding carbon arms on a two-plate carbon hub
 a motor under each arm tip, 30 inch folding propellers. Each arm hinges on a machined aluminium clevis
 block at a hub corner and folds DOWN for transport; in flight the thrust presses the arm up against a
 stop bridge on the clevis, and a ball-lock pin only stops the arm drooping. The Kitewright Core stack
-sits between the hub plates, two ColdCell packs sit on a deck above them, and payloads slide onto the
-Core payload rails under the hub. Two payload modules are modelled: the line-and-float release and the
-tether power module.
+hangs under the bottom hub plate to the family envelope (core_envelope.py: four M4 on 220 x 130 mm, its lid
+up through a 200 x 112 mm opening into the hub), two ColdCell lithium-ion packs (410 x 94 x 94 mm, 4.46 kg
+each) sit side by side on a deck raised above the upper rotors, and payloads slide onto the Core's rail on
+their own payload shoes. Two payload modules are modelled: the line-and-float release and the tether power
+module. Interface figures: the Kitewright interface table of 2026-10-04 (docs/REVIEW.md).
 
 Axes: X forward, Y left, Z up from the ground (the skids stand on Z = 0). The arms lie on the diagonals
 at 45, 135, 225 and 315 degrees. Each arm group is built in a local frame (radial = +X, tangential = +Y)
@@ -27,6 +29,9 @@ from pathlib import Path
 
 from build123d import (Axis, Box, Compound, Cylinder, Polyline, Pos, Rot, Solid, Vector, export_step,
                        export_stl, extrude, make_face)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import core_envelope as CE  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -54,9 +59,9 @@ PARAMS = {
     "collar_r": (230.0, 280.0),
     "collar_d": 48.0,
     "tube": (40.0, 36.0),     # carbon arm tube OD, ID
-    "tube_r": (235.0, 645.0),
+    "tube_r": (235.0, 640.0),  # outer end flush with the shortened motor clamp (decision 34A; 645 before)
     "motor_r": 620.0,         # motor axis radius from the aircraft centre
-    "mount": (50.0, 60.0, 52.0),  # motor mount split clamp: radial, tangential, height
+    "mount": (40.0, 60.0, 52.0),  # motor mount split clamp: radial, tangential, height (shortened from 50 by decision 34A)
     "motor": (90.0, 50.0),    # motor diameter, height
     "hub_d": (40.0, 18.0),    # propeller hub diameter, height
     "prop_d": 762.0,          # 30 inch
@@ -64,19 +69,19 @@ PARAMS = {
     "esc": (70.0, 30.0, 18.0),
     "esc_r0": 470.0,
     # deck and packs
-    "standoff": (8.0, 25.0),
+    "standoff": (8.0, 60.0),          # deck standoffs 60 mm (25 before decision 8A) so the deck and packs sit above the upper rotors
     "post_xy": 130.0,
-    "deck": (290.0, 430.0, 3.0),      # sized for the long lithium-ion packs (KWL-DDR-003; was 330 x 290)
+    "deck": (430.0, 280.0, 2.0),      # re-sized for two ColdCell packs of 410 x 94 x 94 mm (decision 8A; was 330 x 290 x 3)
     "deck_chamfer": 35.0,
-    "pack": (90.4, 378.0, 85.8),      # ColdCell lithium-ion 14S3P variant: X, Y, Z (CCL-DDR-003, CCL-DWG-002)
-    "pack_gap": 30.0,
-    "guide": (20.0, 2.0),
+    "deck_windows": (50.0, 170.0, 32.0, 92.0),   # one lightening window under each pack end: |X| from, to; |Y| from, to
+    "pack": (410.0, 94.0, 94.0),      # ColdCell 14S3P lithium-ion pack as drawn on CCL-DWG-002 (decision 8A): X, Y, Z
+    "pack_gap": 30.0,                 # between the two packs, side by side in Y; the GNSS mast stands in the gap
+    "guide": (15.0, 1.5),             # aluminium angle 15 x 15 x 1.5 (20 x 20 x 2 before decision 8A)
     "strap_w": 25.0,
     "mast": (16.0, 230.0),
     "puck": (70.0, 18.0),
-    # Core stack (interface assumption)
-    "core": (150.0, 100.0, 40.0),
-    "damper": (10.0, 6.0),
+    # Kitewright Core: hung under the bottom hub plate to the family envelope (core_envelope.py, decision 10A)
+    "core_holes": (2.15, 13.0, 6.0, 10.0),   # top-plate clearance holes: M4 radius; boss, SMA and switch hole radii
     # landing gear
     "gear_x": 60.0,
     "strut_top": (112.0, -5.0),       # (y, height relative to z_bot)
@@ -87,27 +92,21 @@ PARAMS = {
     "skid_half": 170.0,
     "gtop": (30.0, 40.0, 25.0),
     "gskid": (30.0, 30.0, 50.0),
-    # payload mount (Core, interface assumption)
-    "rail": (260.0, 20.0, 22.0),      # length, width, height
-    "rail_in": 56.0,                  # inner face of each rail from the centre line
-    "slot": (8.0, 8.0),               # slot depth into the rail, slot height
-    "pplate": (240.0, 124.0, 6.0),    # payload plate
-    "pplate_x0": -128.0,
-    "plug_x": -132.0,                 # front face of the DS-014 socket block
-    "lockpin_x": 105.0,
-    # float release payload
+    # payloads hang from a Core payload shoe (KWC-DWG-106) and keep within the 88 mm neck
     "float": (120.0, 420.0),          # diameter, length
     "bag": (90.0, 90.0),
-    "saddle_x": 90.0,
+    "saddle_x": 55.0,                 # saddles clear of the Core's pigtail plug (x 69 to 83) and pin knobs (x -93 to -75)
+    "saddle": (20.0, 80.0, 55.0),     # X, Y (inside the 88 mm neck), height under the shoe
     # tether module payload
     "conv": (200.0, 110.0, 65.0),
-    # deeper pockets in the machined fittings (KWL-DDR-003, decision 1 option A): side pockets that
-    # leave walls and webs of at least 4.5 mm round every hole, boss and face
-    "pockets": True, "web": 4.5,
+    "conv_posts": (8.0, 34.0),        # four aluminium posts under the shoe: diameter, length (converter below the neck zone)
+    "conv_post_xy": ((-45.0, 30.0), (-45.0, -30.0), (75.0, 30.0), (75.0, -30.0)),   # this shoe is drilled for the posts
+    "conv_x0": -55.0,                 # converter rear end: 20 mm ahead of the Core's pin knobs so they can be pulled
 }
 ARM_ANGLES = (45.0, 135.0, 225.0, 315.0)
 COLLAR_BOLTS = (245.0, 267.0)
-GUIDE_X = (-95.0, 0.0, 95.0)
+GUIDE_X = (-150.0, 0.0, 150.0)
+GUIDE_LEN = 340.0          # pack guides, inside the deck's corner cuts
 
 
 # ---------------------------------------------------------------- helpers
@@ -209,18 +208,14 @@ def hub_posts(P=PARAMS):
     return [(a, 0.0), (-a, 0.0), (0.0, a), (0.0, -a)]
 
 
-def damper_xy(P=PARAMS):
-    return [(sx * 65.0, sy * 40.0) for sx in (-1, 1) for sy in (-1, 1)]
+def core_z(P=PARAMS):
+    """Top face of the Core plate: the deck (bottom hub plate) underside sits on the 8 mm corner spacers."""
+    return P["z_bot"] - CE.CORE["spacer"][2]
 
 
 def gear_bolt_xy(P=PARAMS):
     gx, yt = P["gear_x"], P["strut_top"][0]
     return [(sx * gx, sy * (yt + dy)) for sx in (-1, 1) for sy in (-1, 1) for dy in (-15.0, 15.0)]
-
-
-def rail_bolt_xy(P=PARAMS):
-    yc = P["rail_in"] + P["rail"][1] / 2 + P["slot"][0] / 2 + 1.0
-    return [(x, sy * yc) for x in (-100.0, 0.0, 100.0) for sy in (-1, 1)]
 
 
 def local_to_xy(r, t, ang):
@@ -239,16 +234,21 @@ def hub_plate(P=PARAMS, top=False):
             holes.append((x, y, 2.15))
     for x, y in hub_posts(P):
         holes.append((x, y, 1.65))
+    m4, rb, rs, rw = P["core_holes"]
+    C = CE.CORE
     if top:
         holes.append((0.0, 0.0, 15.0))                       # cable pass to the deck and mast
+        holes.append((C["boss"][0], C["boss"][1], rb))       # the Core lid's GNSS mast boss stands up through the plate
+        holes += [(x, y, rs) for x, y in C["sma"][0]]        # SMA bulkheads (antennas on extension leads, decision 10A)
+        holes.append((C["switch"][0], C["switch"][1], rw))   # safety switch, pressed through the plate
     else:
-        holes += [(x, y, 1.65) for x, y in damper_xy(P)]
         holes += [(x, y, 2.15) for x, y in gear_bolt_xy(P)]
-        holes += [(x, y, 2.15) for x, y in rail_bolt_xy(P)]
-        holes += [(-142.0, 0.0, 2.15), (-142.0, 20.0, 2.15), (-142.0, -20.0, 2.15)]  # DS-014 socket block
-        holes.append((40.0, 0.0, 12.0))                       # payload cable pass
+        holes += [(x, y, m4) for x, y in CE.frame_points()]  # the Core's four M4 hard points, 220 x 130 mm
     for x, y, r in holes:
         pl = pl - zcyl(x, y, r, z0 - 1, z0 + t + 1)
+    if not top:
+        ox, oy = C["deck_opening"]
+        pl = pl - bx(-ox / 2, ox / 2, -oy / 2, oy / 2, z0 - 1, z0 + t + 1)   # opening for the Core lid
     return pl
 
 
@@ -261,23 +261,14 @@ def hinge_block_local(P=PARAMS):
     b = b - bx(P["slot_r0"], r1 + 1, -sw, sw, z0 - 1, z1 - P["bridge_h"])           # slot, open below
     b = b - bx(P["slot_r0"], P["bridge_r"][0], -sw, sw, z1 - P["bridge_h"] - 1, z1 + 1)  # slot, open above inboard of the bridge
     b = b - bx(128.0, 147.0, -8.0, 8.0, z0 - 1, z1 + 1)                              # lightening pocket
+    # decision 34A (2026-10-03): deeper lightening, leaving 4 to 5 mm walls and webs round every hole
+    for s in (-1, 1):
+        b = b - bx(128.0, 147.0, s * 12.0, s * (w + 1), z0 + 16, z1 - 16)               # side pockets in the bolting end
+    b = b - bx(153.0, 171.0, -w - 1, w + 1, zb + 10, zb + 56)                         # window through both cheeks
+    b = b - bx(190.0, r1 + 1, -w - 1, w + 1, z0 - 1, zb + 25)                         # outboard lower corner of the cheeks
+    b = b - bx(203.0, r1 + 1, -w - 1, w + 1, zb + 24, zb + 48)                        # under the stop bridge, outboard of the lock boss (15 mm top rail left)
     pr, ph = P["pivot"]
     lr, lh = P["lock"]
-    if P.get("pockets"):
-        wb = P["web"]
-        # side pockets in the bolting end, between the top and bottom bolt bosses, 4.5 mm from the centre pocket
-        for s in (-1, 1):
-            b = b - bx(r0 + wb, P["slot_r0"] - 2.0, s * (8.0 + wb), s * (w + 1), z0 + 12 + wb, z1 - 12 - wb)
-        # outer-face pockets in the cheeks, 2.5 mm deep (4.5 mm of cheek left), clear of the pin bosses and the bridge
-        zp, zl = zb + ph, zb + lh
-        bp, bl_ = P["pin_d"] / 2 + wb, P["pin_d"] / 2 + wb
-        rects = [(P["slot_r0"] + 2.0, pr - bp - 0.5, z0 + wb, z1 - wb),
-                 (pr - bp + 0.5 + 0.0, lr - bl_ - 0.5, zp + bp + 1.0, z1 - wb),
-                 (pr + bp + 0.5, P["bridge_r"][0] - 3.0, z0 + wb, zl - bl_ - 0.5)]
-        for ra, rb, za, zb_ in rects:
-            if rb - ra > 4 and zb_ - za > 4:
-                for s in (-1, 1):
-                    b = b - bx(ra, rb, s * (sw + wb), s * (w + 1), za, zb_)
     b = b - ycyl(pr, zb + ph, P["pin_d"] / 2 + 0.05, -w - 1, w + 1)
     b = b - ycyl(lr, zb + lh, P["pin_d"] / 2 + 0.1, -w - 1, w + 1)
     for r, tt in block_bolt_holes(P):
@@ -299,17 +290,11 @@ def tongue_local(P=PARAMS):
     lr, lh = P["lock"]
     t = t - ycyl(pr, zb + ph, P["pin_d"] / 2 + 0.05, -w - 1, w + 1)
     t = t - ycyl(lr, zb + lh, P["pin_d"] / 2 + 0.1, -w - 1, w + 1)
-    t = t - bx(206.0, 228.0, -w - 1, w + 1, z_arm - 12, z_arm + 12)                   # lightening window
-    if P.get("pockets"):
-        wb = P["web"]
-        web_half = 5.0                                                               # 10 mm centre web
-        bp = P["pin_d"] / 2 + wb
-        rects = [(P["tongue_r"][0] + wb, lr - bp - 0.5, zb + ph + bp + 0.5, za1 - wb),
-                 (pr + bp + 0.5, 206.0 - wb, za0 + wb, zb + lh - bp - 0.5)]
-        for ra, rb, za, zb_ in rects:
-            if rb - ra > 4 and zb_ - za > 4:
-                for s in (-1, 1):
-                    t = t - bx(ra, rb, s * web_half, s * (w + 1), za, zb_)
+    t = t - bx(206.0, 228.0, -w - 1, w + 1, z_arm - 14, z_arm + 14)                   # lightening window (24 tall before decision 34A)
+    # decision 34A (2026-10-03): side pockets 12.5 deep each side leave a 5 mm web, with 5 mm bosses round the holes
+    bosses = ycyl(pr, zb + ph, 9.5, -w - 2, w + 2) + ycyl(lr, zb + lh, 9.5, -w - 2, w + 2)
+    for s in (-1, 1):
+        t = t - (bx(170.0, 201.0, s * 2.5, s * (w + 1), za0 + 5, za1 - 5) - bosses)
     for r in COLLAR_BOLTS:
         t = t - ycyl(r, z_arm, 2.65, -30, 30)
     return t
@@ -353,12 +338,6 @@ def mount_local(P=PARAMS):
             zf = z_arm + s * mh / 2
             h = h - zcyl(x, y, 1.65, min(zf, zf - s * 9), max(zf, zf - s * 9))
         h = h - ycyl(rc, z_arm, 2.65, -mt, mt)
-        if P.get("pockets"):
-            wb = P["web"]
-            dr = 17.0 - 2.15 - wb                                                     # clear of the clamp bolts
-            zi0, zi1 = (z_arm + wb, z_arm + mh / 2 - wb) if s > 0 else (z_arm - mh / 2 + wb, z_arm - wb)
-            for sy in (-1, 1):
-                h = h - bx(rc - dr, rc + dr, sy * (P["tube"][0] / 2 + 0.1 + wb), sy * (mt / 2 + 1), zi0, zi1)
         halves.append(h)
     return Compound(halves)
 
@@ -443,12 +422,19 @@ def hub_spacers(P=PARAMS):
 
 # ---------------------------------------------------------------- deck, packs, mast
 def pack_centres(P=PARAMS):
-    px = P["pack"][0] / 2 + P["pack_gap"] / 2
-    return [(-px, 0.0), (px, 0.0)]
+    """Two packs side by side in Y, long axis along X (decision 8A)."""
+    py = P["pack"][1] / 2 + P["pack_gap"] / 2
+    return [(0.0, -py), (0.0, py)]
+
+
+def pack_half_y(P=PARAMS):
+    """Outer face of the pack pair from the centre line."""
+    return P["pack_gap"] / 2 + P["pack"][1]
 
 
 def strap_x(P=PARAMS):
-    return [cx + s * 30.0 for cx, _ in pack_centres(P) for s in (-1, 1)]
+    """Four cam straps, each round both packs, clear of the mast in the gap."""
+    return [-150.0, -60.0, 60.0, 150.0]
 
 
 def deck(P=PARAMS):
@@ -461,7 +447,7 @@ def deck(P=PARAMS):
     d = prism_xy(pts, z0, z0 + t)
     for x, y in hub_posts(P):
         d = d - zcyl(x, y, 1.65, z0 - 1, z0 + t + 1)
-    py = P["pack"][1] / 2
+    py = pack_half_y(P)
     for x in strap_x(P):
         for s in (-1, 1):
             d = d - bx(x - 15, x + 15, s * (py + 0.5), s * (py + 4.5), z0 - 1, z0 + t + 1)
@@ -470,6 +456,10 @@ def deck(P=PARAMS):
         for s in (-1, 1):
             d = d - zcyl(x, s * gy, 2.15, z0 - 1, z0 + t + 1)
     d = d - zcyl(0, 0, 8.5, z0 - 1, z0 + t + 1)   # mast foot and pack leads
+    wx0, wx1, wy0, wy1 = P["deck_windows"]
+    for sx in (-1, 1):
+        for sy in (-1, 1):
+            d = d - bx(sx * wx0, sx * wx1, sy * wy0, sy * wy1, z0 - 1, z0 + t + 1)   # lightening windows under the packs
     return d
 
 
@@ -477,8 +467,8 @@ def guides(P=PARAMS):
     D = derived(P)
     a, t = P["guide"]
     z0 = D["z_deck_top"]
-    py = P["pack"][1] / 2 + 5.0
-    L = P["deck"][0] - 2 * P["deck_chamfer"] - 10
+    py = pack_half_y(P) + 5.0
+    L = GUIDE_LEN
     out = []
     for s in (-1, 1):
         y0 = s * py
@@ -493,13 +483,14 @@ def packs(P=PARAMS):
     D = derived(P)
     X, Y, Z = P["pack"]
     z0 = D["z_deck_top"]
-    return [bx(cx - X / 2, cx + X / 2, -Y / 2, Y / 2, z0, z0 + Z) for cx, _ in pack_centres(P)]
+    return [bx(cx - X / 2, cx + X / 2, cy - Y / 2, cy + Y / 2, z0, z0 + Z) for cx, cy in pack_centres(P)]
 
 
 def straps(P=PARAMS):
     D = derived(P)
     w = P["strap_w"]
-    X, Y, Z = P["pack"]
+    X, _, Z = P["pack"]
+    Y = 2 * pack_half_y(P)
     z0, zt = D["z_deck_top"], D["z_deck_top"] + Z
     zd = D["z_deck"]
     out = []
@@ -521,51 +512,30 @@ def mast(P=PARAMS):
     return foot + tube, zcyl(0, 0, pd / 2, z0 + h, z0 + h + ph)
 
 
-# ---------------------------------------------------------------- Core stack and payload mount (interface assumptions)
+# ---------------------------------------------------------------- Kitewright Core to the family envelope (decision 10A)
 def core_stack(P=PARAMS):
-    zb, t = P["z_bot"], P["plate_t"]
-    L, W, H = P["core"]
-    dd, dh = P["damper"]
-    z0 = zb + t + dh
-    box_ = bx(-L / 2, L / 2, -W / 2, W / 2, z0, z0 + H)
-    dampers = fuse([zcyl(x, y, dd / 2, zb + t, z0) for x, y in damper_xy(P)])
-    return box_, dampers
+    """The Core body under the bottom hub plate: plate, corner spacers, lid (through the deck opening) and
+    strain-relief bar. Returned as (body, None) for the older callers."""
+    return CE.place(CE.core_body(), 0, 0, core_z(P)), None
 
 
 def rails(P=PARAMS):
-    zb = P["z_bot"]
-    L, W, H = P["rail"]
-    yi = P["rail_in"]
-    sd, sh = P["slot"]
-    zs0 = zb - H + 2
-    out = []
-    for s in (-1, 1):
-        r = bx(-L / 2, L / 2, s * yi, s * (yi + W), zb - H, zb)
-        r = r - bx(-L / 2 - 1, L / 2 + 1, s * (yi - 1), s * (yi + sd), zs0, zs0 + sh)
-        for x, y in rail_bolt_xy(P):
-            if y * s > 0:
-                r = r - zcyl(x, y, 1.65, zb - 12, zb + 1)
-        r = r - ycyl(P["lockpin_x"], zb - 8, 3.1, s * (yi - 1), s * (yi + W + 1))
-        out.append(r)
-    return out
+    """The Core's plain rail, front stops and pin blocks under its plate (part of the Core)."""
+    return [CE.place(CE.core_rail(), 0, 0, core_z(P))]
 
 
 def ds014_socket(P=PARAMS):
-    zb = P["z_bot"]
-    x1 = P["plug_x"]
-    s = bx(x1 - 20, x1, -30, 30, zb - 16, zb)
-    for y in (-20.0, 0.0, 20.0):
-        s = s - zcyl(-142.0, y, 1.65, zb - 10, zb + 1)
-    return s
+    """The Core's DS-014 pigtail and plug, in front of the shoe's notch (part of the Core)."""
+    return CE.place(CE.core_plug(), 0, 0, core_z(P))
 
 
 def payload_lock_pin(P=PARAMS):
-    zb = P["z_bot"]
-    x = P["lockpin_x"]
-    yo = P["rail_in"] + P["rail"][1]
-    shank = ycyl(x, zb - 8, 3.0, -yo - 2, yo + 6)
-    head = ycyl(x, zb - 8, 7.0, -yo - 10, -yo - 2)
-    return shank + head
+    """The Core's two locking pins (indexing plungers), engaged in the payload shoe."""
+    return CE.place(CE.core_pins(), 0, 0, core_z(P))
+
+
+def neck_zone(P=PARAMS):
+    return [CE.place(z, 0, 0, core_z(P)) for z in CE.neck_zone()]
 
 
 # ---------------------------------------------------------------- landing gear
@@ -639,29 +609,20 @@ def end_caps(P=PARAMS):
 
 # ---------------------------------------------------------------- payloads
 def payload_plate(P=PARAMS):
-    zb = P["z_bot"]
-    L, W, t = P["pplate"]
-    x0 = P["pplate_x0"]
-    zs0 = zb - P["rail"][2] + 2
-    z0 = zs0 + 1
-    pl = bx(x0, x0 + L, -W / 2, W / 2, z0, z0 + t)
-    for x in (-55.0, 45.0):
-        pl = pl - zcyl(x, 0, 25.0, z0 - 1, z0 + t + 1)                                  # lightening holes
-    lx = P["lockpin_x"]
-    lug = bx(lx - 10, lx + 10, -10, 10, z0 + t, zb - 3) - ycyl(lx, zb - 8, 3.15, -11, 11)
-    plug = bx(x0, x0 + 18, -25, 25, z0 + t, zb - 3)
-    return pl + lug + plug, z0
+    """A payload shoe to KWC-DWG-106 (each payload carries its own). Returns the shoe and its underside Z."""
+    sh = CE.place(CE.shoe(), 0, 0, core_z(P))
+    return sh, core_z(P) + CE.CORE["shoe"][3]
 
 
 def float_release(P=PARAMS):
-    zb = P["z_bot"]
     plate, z0 = payload_plate(P)
     fd, fl = P["float"]
-    zf = z0 - 40.0 - fd / 2 + 12.0         # float axis
+    sx_, sy_, sh_ = P["saddle"]
+    zf = z0 - sh_ - fd / 2 + 12.0          # float axis: the float sits 12 mm up into the saddle seats
     float_ = xcyl(0, zf, fd / 2, -fl / 2, fl / 2)
     bag = xcyl(0, zf, P["bag"][0] / 2, fl / 2, fl / 2 + P["bag"][1])
     sx = P["saddle_x"]
-    saddles = fuse([bx(s * sx - 10, s * sx + 10, -50, 50, z0 - 40, z0) - xcyl(0, zf, fd / 2 + 0.5, -fl, fl)
+    saddles = fuse([bx(s * sx - sx_ / 2, s * sx + sx_ / 2, -sy_ / 2, sy_ / 2, z0 - sh_, z0) - xcyl(0, zf, fd / 2 + 0.5, -fl, fl)
                     for s in (-1, 1)])
     unit = bx(-30, 30, -20, 20, z0 - 22, z0)
     ring = xcyl(0, zf, fd / 2 + 3.5, -12, 12) - xcyl(0, zf, fd / 2 + 0.5, -13, 13)
@@ -671,11 +632,15 @@ def float_release(P=PARAMS):
 
 def tether_module(P=PARAMS):
     plate, z0 = payload_plate(P)
+    pd, ph = P["conv_posts"]
+    posts = fuse([zcyl(x, y, pd / 2, z0 - ph, z0) for x, y in P["conv_post_xy"]])
     L, W, H = P["conv"]
-    conv = bx(-L / 2 + 5, L / 2 + 5, -W / 2, W / 2, z0 - H, z0)
-    brk = zcyl(-70.0, 0, 20.0, z0 - H - 50, z0 - H)
-    cable = zcyl(-70.0, 0, 4.0, z0 - H - 450, z0 - H - 50)
-    return {"tm_plate": plate, "converter": conv, "breakaway": brk, "tether": cable}
+    zc = z0 - ph
+    cx0 = P["conv_x0"]
+    conv = bx(cx0, cx0 + L, -W / 2, W / 2, zc - H, zc)
+    brk = zcyl(-70.0, 0, 20.0, zc - H - 50, zc - H)
+    cable = zcyl(-70.0, 0, 4.0, zc - H - 450, zc - H - 50)
+    return {"tm_plate": plate + posts, "converter": conv, "breakaway": brk, "tether": cable}
 
 
 # ---------------------------------------------------------------- components
@@ -708,17 +673,17 @@ BOM = {  # key: (BOM line, plain name)
     "guides": (18, "Pack guides (2)"),
     "straps": (19, "Pack straps (4)"),
     "mast": (20, "GNSS mast"),
-    "core": (21, "Kitewright Core stack (Core)"),
-    "rails": (22, "Payload rails (Core)"),
-    "ds014": (22, "DS-014 socket (Core)"),
-    "paylock": (22, "Payload lock pin (Core)"),
+    "core": (21, "Kitewright Core (Core)"),
+    "rails": (22, "Core payload rail (Core)"),
+    "ds014": (22, "Core DS-014 pigtail plug (Core)"),
+    "paylock": (22, "Core locking pins (Core)"),
     "packs": (23, "ColdCell packs (2)"),
-    "fr_plate": (26, "Payload plate, float release"),
+    "fr_plate": (26, "Payload shoe, float release"),
     "saddles": (27, "Float saddles (2)"),
     "release": (28, "Release unit"),
     "sling": (29, "Float sling"),
     "float": (30, "Rescue float and line bag"),
-    "tm_plate": (31, "Payload plate, tether module"),
+    "tm_plate": (31, "Payload shoe and posts, tether module"),
     "converter": (32, "Tether DC-DC converter"),
     "breakaway": (33, "Tether breakaway connector"),
     "tether": (34, "Tether (shown short)"),
@@ -754,9 +719,9 @@ def build_components(P=PARAMS, payload="float", folded=False):
     C["straps"] = Compound(straps(P))
     mt, puck = mast(P)
     C["mast"] = mt + puck
-    cb, dm = core_stack(P)
-    C["core"] = cb + dm
-    C["rails"] = Compound(rails(P))
+    cb, _ = core_stack(P)
+    C["core"] = cb
+    C["rails"] = rails(P)[0]
     C["ds014"] = ds014_socket(P)
     C["paylock"] = payload_lock_pin(P) if payload else None
     C["gear_tops"] = Compound(gear_tops(P))
@@ -781,7 +746,7 @@ HOLDS = [  # (part, what holds it): must touch or sit within 1 mm
     ("arm_roots", "pivots"), ("arm_tubes", "arm_roots"), ("motor_mounts", "arm_tubes"), ("motors", "motor_mounts"),
     ("props", "motors"), ("escs", "arm_tubes"), ("pivots", "hinge_blocks"), ("lock_pins", "hinge_blocks"),
     ("deck", "spacers"), ("guides", "deck"), ("packs", "deck"), ("straps", "packs"), ("mast", "deck"),
-    ("core", "bot_plate"), ("rails", "bot_plate"), ("ds014", "bot_plate"), ("paylock", "rails"),
+    ("core", "bot_plate"), ("rails", "core"), ("ds014", "core"), ("paylock", "rails"),
     ("gear_tops", "bot_plate"), ("struts", "gear_tops"), ("struts", "skid_blocks"), ("skids", "skid_blocks"),
     ("fr_plate", "rails"), ("saddles", "fr_plate"), ("release", "fr_plate"), ("float", "saddles"), ("sling", "release"),
     ("tm_plate", "rails"), ("converter", "tm_plate"), ("breakaway", "converter"),
@@ -789,6 +754,7 @@ HOLDS = [  # (part, what holds it): must touch or sit within 1 mm
 ALLOWED = [  # pins and bolts pass through the holes made for them; checked by hole size instead
     {"pivots", "arm_roots"}, {"pivots", "hinge_blocks"}, {"lock_pins", "arm_roots"}, {"lock_pins", "hinge_blocks"},
     {"paylock", "rails"}, {"paylock", "fr_plate"}, {"paylock", "tm_plate"}, {"straps", "deck"},
+    {"ds014", "core"},
     {"tether", "breakaway"},
 ]
 
@@ -848,6 +814,15 @@ def checks(P=PARAMS, verbose=True):
                 v = _overlap(C[a].shape, C[b].shape)
                 if not v < 1.0:
                     over.append((a, b, round(v, 1)))
+        # payload neck (Core interface, decision 10A): payload parts stay inside 88 mm from the shoe to 30 mm below the lips
+        if kw.get("payload"):
+            for zn in neck_zone(P):
+                for k in ("saddles", "release", "sling", "float", "converter", "breakaway", "tm_plate"):
+                    if k in C:
+                        sh_ = C[k].shape if k != "tm_plate" else (C[k].shape - payload_plate(P)[0])
+                        v = _overlap(sh_, zn)
+                        if not v < 1.0:
+                            over.append((k, "payload neck zone", round(v, 1)))
         res[label] = (over, flo)
         if verbose:
             print(f"[{label}] overlaps (should be none): {over or 'none'}")
@@ -869,6 +844,14 @@ def clearances(P=PARAMS):
     out["upper disc to packs"] = _dist(disc_up, C["packs"].shape)
     out["upper disc to deck"] = _dist(disc_up, C["deck"].shape)
     out["prop tip to tip"] = D["tip_gap"]
+    # decision 8A: the deck and packs sit above the upper rotors and outside their discs in plan
+    mc = P["motor_r"] / math.sqrt(2)
+    R_ = P["prop_d"] / 2
+    out["plan: upper disc edge to pack corner"] = math.hypot(mc - P["pack"][0] / 2, mc - pack_half_y(P)) - R_
+    hx, hy = P["deck"][0] / 2, P["deck"][1] / 2
+    out["plan: upper disc edge to deck corner cut"] = (2 * mc - (hx + hy - P["deck_chamfer"])) / math.sqrt(2) - R_
+    out["deck underside above the upper blades"] = D["z_deck"] - (D["z_upper_prop"] + P["blade"][2] / 2)
+    out["Core lid boss top below the deck"] = D["z_deck"] - (core_z(P) + 1 + CE.CORE["lid"][2] + CE.CORE["boss"][3])
     out["folded: motors to skids"] = _dist(F["motors"].shape, F["skids"].shape)
     out["folded: props to gear"] = min(_dist(F["props"].shape, F["struts"].shape), _dist(F["props"].shape, F["gear_tops"].shape))
     out["folded: tubes to struts"] = _dist(F["arm_tubes"].shape, F["struts"].shape)

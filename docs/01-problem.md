@@ -3,7 +3,7 @@ doc_id: KWL-PRB-001
 title: Kitewright Lift problem statement
 project: Kitewright Lift
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-03'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-03'
   author: Amish Chadha
   change: TRL 2 and 3; first co-design candidate with a checklist; open questions answered by KWL-DDR-001 and KWL-CAL-001; safety section
+- version: "0.3"
+  date: '2026-10-03'
+  author: Amish Chadha
+  change: Safety note updated for the lithium-ion ColdCell packs (decision 35A, KWL-DDR-003)
 ---
 
 # Kitewright Lift problem statement
@@ -100,4 +104,4 @@ Settled at TRL 2 and 3 (KWL-DDR-001, KWL-CAL-001):
 
 ## Safety
 
-> **Safety:** Kitewright Lift is a 25 kg class aircraft with eight 30 inch propellers, lithium iron phosphate packs, a 400 V tether and suspended loads. Spinning propellers can kill; packs can burn after a crash or a cold charge; the tether carries a dangerous voltage; a dropped load or a downwash blast can hurt people below. It is an open engineering reference, not certified aviation equipment, for civilian use only. Fly only where local rules allow, never over or near uninvolved people, and never carry or lift a person.
+> **Safety:** Kitewright Lift is a 25 kg class aircraft with eight 30 inch propellers, lithium-ion packs (ColdCell's variant for Lift, decision 35A), a 400 V tether and suspended loads. Spinning propellers can kill; packs can burn after a crash or a cold charge; the tether carries a dangerous voltage; a dropped load or a downwash blast can hurt people below. It is an open engineering reference, not certified aviation equipment, for civilian use only. Fly only where local rules allow, never over or near uninvolved people, and never carry or lift a person.
